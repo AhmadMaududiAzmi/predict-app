@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExampleController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,4 +23,18 @@ Route::get('/login', function() {
     return view('login');
 });
 
+// Auth
+
+// Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index']);
+
+// Comodities
+
+// Markets
+
+// Logs
+
+// Setting
+
+// Model predict
 Route::get('/testpython', [ExampleController::class, 'index']);

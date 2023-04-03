@@ -24,9 +24,9 @@
 
 <body class="antialiased">
     <div class="wrapper">
-        @include('partials.sidebar')
+        {{-- @include('partials.sidebar') --}}
         <div class="main">
-            @include('partials.topbar')
+            {{-- @include('partials.topbar') --}}
             <main class="content">
                 <div class="container-fluid p-0">
                     @yield('content')
