@@ -13,17 +13,20 @@
 				</a>
 
 				<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-					<img src="{{ url('/' . auth()->user()->avatar) }}"
+					{{-- <img src="{{ url('/' . auth()->user()->avatar) }}"
 						class="avatar img-fluid rounded-circle border me-1" alt="{{ auth()->user()->fullname }}" />
-					<span class="text-dark fw-bold">{{ auth()->user()->fullname }}</span>
+					<span class="text-dark fw-bold">{{ auth()->user()->fullname }}</span> --}}
+					<img src="/img/avatar.jpg" class="avatar img-fluid rounded-circle border me-1" />
+					<span class="text-dark fw-bold">Admin</span>
 				</a>
 				<div class="dropdown-menu dropdown-menu-end">
-					<a class="dropdown-item" href="{{ route('users.editprofil', auth()->user()->id) }}">
-						<i class="align-middle me-1" data-feather="user"></i> Profil
-					</a>
-					<a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirm-modal">
-						<i class="align-middle me-1" data-feather="log-out"></i> Keluar
-					</a>
+					{{-- <a class="dropdown-item" href="{{ route('users.editprofil', auth()->user()->id) }}"> --}}
+						<a class="dropdown-item" href="">
+							<i class="align-middle me-1" data-feather="user"></i> Profil
+						</a>
+						<a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirm-modal">
+							<i class="align-middle me-1" data-feather="log-out"></i> Keluar
+						</a>
 				</div>
 			</li>
 		</ul>
@@ -39,7 +42,8 @@
 				@csrf
 				<div class="modal-header">
 					<h5 class="modal-title" id="delete">Konfirmasi</h5>
-					<button type="button" class="btn btn-light-danger btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
+					<button type="button" class="btn btn-light-danger btn-close-modal" data-bs-dismiss="modal"
+						aria-label="Close">
 						<i data-feather="x"></i>
 					</button>
 				</div>

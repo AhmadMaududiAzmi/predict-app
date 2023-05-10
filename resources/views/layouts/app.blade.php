@@ -13,10 +13,9 @@
     <title>CPP - Comodities Price Predict</title>
 
     {{-- Styles --}}
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('/css/app.css') }}">
     <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
-    <link rel="stylesheet" type="text/css"
-        href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     @yield('lib-style')
     @yield('page-style')
@@ -24,9 +23,9 @@
 
 <body class="antialiased">
     <div class="wrapper">
-        {{-- @include('partials.sidebar') --}}
+        @include('partials.sidebar')
         <div class="main">
-            {{-- @include('partials.topbar') --}}
+            @include('partials.topbar')
             <main class="content">
                 <div class="container-fluid p-0">
                     @yield('content')

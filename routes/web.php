@@ -3,6 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExampleController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GrafikController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ListComodityController;
+use App\Http\Controllers\MarketController;
+use App\Http\Controllers\PriceComodityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,18 +24,23 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/login', function() {
-    return view('login');
-});
-
 // Auth
+Route::get('/login', [LoginController::class, 'index']);
 
 // Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index']);
 
-// Comodities
+// Grafik
+Route::get('/grafik', [GrafikController::class, 'index']);
+
+// Comodities - List Comodity
+Route::get('/komoditas/listkomoditas', [ListComodityController::class, 'index']);
+
+// Comodities - Comodities Price
+Route::get('/komoditas/hargakomoditas', [PriceComodityController::class, 'index']);
 
 // Markets
+Route::get('/pasar', [MarketController::class, 'index']);
 
 // Logs
 

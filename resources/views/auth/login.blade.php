@@ -4,6 +4,23 @@
 @endsection
 
 @section('page-style')
+<style>
+    .bg-login {
+        position: relative;
+		widows: 100%;
+		height: 100%;
+		z-index: 1;
+		background: linear-gradient(hsla(155,74%,5%,.4), hsla(155,74%,5%,.4)), url('../img/bg-login.jpg');
+		background-attachment: fixed;
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		overflow: auto;
+    }
+    .h2, .lead {
+		color: #fff;
+	}
+</style>
 @endsection
 
 @section('content')
@@ -21,7 +38,7 @@
                 <div class="card-body">
                     <div class="m-sm-4">
                         <div class="text-center">
-                            <img src="" alt="Logo" class="img-fluid mb-4" width="132" height="132" />
+                            <img src="/img/logo.png" alt="Logo" class="img-fluid mb-4" width="160" height="160"/>
                         </div>
                         <form action="POST">
                             {{-- @csrf --}}
