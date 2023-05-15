@@ -20,12 +20,15 @@ use App\Http\Controllers\PriceComodityController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 // Auth
 Route::get('/login', [LoginController::class, 'index']);
+
+// Maintenance 
+Route::get('/maintenance', function () {
+    $pagename = '';
+    return view('maintenance', compact('pagename'));
+});
 
 // Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index']);

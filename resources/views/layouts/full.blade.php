@@ -8,7 +8,7 @@
     {{-- <link rel="icon" href="{{ asset($site->favicon) }}" sizes="32x32" /> --}}
 
     {{-- <title>{{$site->title}}</title> --}}
-    <title>CPP - Login</title>
+    <title>CPP - comodities Price Prediction</title>
 
     <!-- Styles -->
     <link href="{{asset('/css/app.css')}}" rel="stylesheet">
