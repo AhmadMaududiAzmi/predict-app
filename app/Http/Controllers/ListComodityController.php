@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\ListComodities;
 
 class ListComodityController extends Controller
 {
@@ -12,7 +13,8 @@ class ListComodityController extends Controller
     public function index()
     {
         $pagename = 'Daftar Komoditas';
-        return view('listcomodities.index', compact('pagename'));
+        $comodities = ListComodities::all();
+        return view('listcomodities.index', compact('pagename', 'comodities'));
     }
 
     /**
@@ -36,7 +38,7 @@ class ListComodityController extends Controller
      */
     public function show(string $id)
     {
-        //
+        
     }
 
     /**

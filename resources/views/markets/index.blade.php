@@ -17,48 +17,32 @@
         </button>
     </div>
     <div class="card-body">
-        <div class="row">
-            <div class="col-sm-6 d-flex align-items-center justify-content-start">
-                <div class="dataTables_length" id="dataTables">
-                    <label for="">
-                        Tampilkan
-                        <select name="komoditasLength" id="komoditasLength" class="form-select form-select-sm">
-                            <option value="10">10</option>
-                            <option value="30">30</option>
-                            <option value="60">60</option>
-                            <option value="120">120</option>
-                        </select>
-                    </label>
-                </div>
-            </div>
-            <div class="col-sm-6 d-flex align-items-center justify-content-end">
-                <div id="dataTables_filter" class="dataTables_filter"><label><input type="search"
-                            class="form-control form-control-sm" placeholder="Cari" aria-controls="dataTables"></label></div>
-            </div>
-        </div>
         <table class="table table-striped" id="tabelPasar">
             <thead>
                 <tr>
                     <th class="col-number">No.</th>
-                    <th> Pasar </th>
+                    <th> Nama Pasar </th>
                     <th> Kota/Kabupaten </th>
+                    <th> Keterangan </th>
                     <th class="col-actions" data-orderable="false"> Aksi </th>
                 </tr>
             </thead>
             <tbody>
-                {{-- @foreach ($comodities as $item)
+                @foreach ($markets as $item)
                 <tr>
-                    <td class="col-number">{{ $loop->iteration }}</td>
-                    <td>
-
+                    <td class="col-number">
+                        {{ $loop->iteration }}
                     </td>
                     <td>
-
+                        {{ $markets->nama_pasar }}
                     </td>
                     <td>
-
+                        {{ $markets->kota_kabupaten }}
                     </td>
-                    <td class="col-actions">
+                    <td>
+                        {{ $markets->keterangan }}
+                    </td>
+                    {{-- <td class="col-actions">
                         <a title="Perbarui" class="btn-table-action update me-2" data-bs-toggle="modal"
                             data-bs-target="#update-modal" data-bs-act="{{ route('hipam.update', $hp->id) }}"
                             data-bs-name="{{ $hp->name }}" data-bs-subdistrict="{{ $hp->psub_district_id }}"
@@ -68,11 +52,12 @@
                             data-bs-target="#delete-modal" data-bs-id="{{ $hp->id }}"
                             data-bs-act="{{ route('hipam.destroy', $hp->id) }}" data-bs-name="{{ $hp->name }}"><i
                                 data-feather="trash-2"></i></a>
-                    </td>
+                    </td> --}}
                 </tr>
-                @endforeach --}}
+                @endforeach
             </tbody>
         </table>
+        {{ $markets -> links() }}
     </div>
 </div>
 

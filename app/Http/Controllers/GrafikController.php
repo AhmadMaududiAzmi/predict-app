@@ -3,16 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\PrediksiController;
+use App\Models\ListComodities;
 
 class GrafikController extends Controller
 {
+    /**
+     * Memanggil variabel pada controller lain (pada kasus ini dalam file .py)
+     */
+    protected $predict;
+
+    public function __construct(PrediksiController $predict)
+    {
+        $this->predict = $predict;
+    }
+    
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $pagename = "Grafik Harga Komoditas";
-        return view('grafik.index', compact('pagename'));
+        $predict = $this->predict->index();
+        return view('grafik.index', compact('pagename', 'predict'));
     }
 
     /**
@@ -20,7 +33,8 @@ class GrafikController extends Controller
      */
     public function create()
     {
-        //
+        $comodities = ListComodities::all();
+        return view('grafik.create', compact('comodities'));
     }
 
     /**
@@ -28,7 +42,16 @@ class GrafikController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        ListComodities::updateOrCreate(
+        [
+            'id' => $request->id
+        ],
+        [
+            'comodity' => $request->nama_komoditas,
+            'market' => $request->nm_pasar
+        ]);
+
+        return response()->json(['Loading'=>'Product will predicted']);
     }
 
     /**

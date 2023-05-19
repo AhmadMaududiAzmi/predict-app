@@ -57,9 +57,9 @@
         <ul id="users" class="sidebar-dropdown list-unstyled collapse {{ request()->is('user*') ? 'show' : '' }}"
           data-bs-parent="#sidebar">
           <li class="sidebar-item  {{ request()->is('users*') ? 'active' : '' }}"><a class="sidebar-link"
-              href="/users">Daftar Pengguna</a></li>
+              href="/pengguna/daftar_pengguna">Daftar Pengguna</a></li>
           <li class="sidebar-item  {{ request()->is('user/roles') ? 'active' : '' }}">
-            <a class="sidebar-link" href="/user/roles">Daftar Peran</a>
+            <a class="sidebar-link" href="/pengguna/daftar_peran">Daftar Peran</a>
           </li>
         </ul>
       </li>

@@ -2,20 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PriceComodities;
 use Illuminate\Http\Request;
 
-class PriceComodityController extends Controller
+class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $pagename = 'Daftar Harga Komoditas';
-        $comodities = PriceComodities::paginate(100);
-        // dd($comodities);
-        return view('pricecomodities.index', compact('pagename', 'comodities'));
+        $pagename = 'Daftar Peran';
+        // return view('accounts.role', compact('pagename'));
     }
 
     /**

@@ -29,33 +29,39 @@
                 </tr>
             </thead>
             <tbody>
-                {{-- @foreach ($comodities as $item)
+                @foreach ($comodities as $item)
                 <tr>
-                    <td class="col-number">{{ $loop->iteration }}</td>
-                    <td>
-
+                    <td class="col-number">
+                        {{ $loop->iteration }}
                     </td>
                     <td>
-
+                        {{ $item->tanggal }}
                     </td>
                     <td>
-
+                        {{ $item->nm_pasar }}
                     </td>
-                    <td class="col-actions">
+                    <td>
+                        {{ $item->nm_komoditas }}
+                    </td>
+                    <td>
+                        {{ $item->harga_current }}
+                    </td>
+                    {{-- <td class="col-actions">
                         <a title="Perbarui" class="btn-table-action update me-2" data-bs-toggle="modal"
-                            data-bs-target="#update-modal" data-bs-act="{{ route('hipam.update', $hp->id) }}"
-                            data-bs-name="{{ $hp->name }}" data-bs-subdistrict="{{ $hp->psub_district_id }}"
-                            data-bs-district="{{ $hp->pdistrict_id }}"
-                            data-bs-subvillage="{{ $hp->psub_village_id }}"><i data-feather="refresh-cw"></i></a>
+                            data-bs-target="#update-modal" data-bs-act="{{ route('pricecomodities.update', $item->id) }}"
+                            data-bs-tanggal="{{ $item->tanggal }}" data-bs-nm_pasar="{{ $item->nm_pasar }}"
+                            data-bs-nm_komoditas="{{ $item->nm_komoditas }}"
+                            data-bs-harga_current="{{ $item->harga_current }}"><i data-feather="refresh-cw"></i></a>
                         <a title="Hapus" class="btn-table-action delete" data-bs-toggle="modal"
                             data-bs-target="#delete-modal" data-bs-id="{{ $hp->id }}"
-                            data-bs-act="{{ route('hipam.destroy', $hp->id) }}" data-bs-name="{{ $hp->name }}"><i
+                            data-bs-act="{{ route('pricecomodities.destroy', $item->id) }}" data-bs-nm_komoditas="{{ $item->nm_komoditas }}"><i
                                 data-feather="trash-2"></i></a>
-                    </td>
+                    </td> --}}
                 </tr>
-                @endforeach --}}
+                @endforeach
             </tbody>
         </table>
+        {{ $comodities->links() }}
     </div>
 </div>
 @endsection
@@ -64,4 +70,7 @@
 @endsection
 
 @section('page-script')
+<section>
+    
+</section>
 @endsection

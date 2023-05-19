@@ -2,12 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExampleController;
+use App\Http\Controllers\PrediksiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ListComodityController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\PriceComodityController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+use App\Models\DaftarKomoditas;
+use App\Models\ListComodities;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,16 +39,25 @@ Route::get('/maintenance', function () {
 Route::get('/dashboard', [DashboardController::class, 'index']);
 
 // Grafik
-Route::get('/grafik', [GrafikController::class, 'index']);
+Route::resource('/grafik', GrafikController::class);
 
 // Comodities - List Comodity
-Route::get('/komoditas/listkomoditas', [ListComodityController::class, 'index']);
+Route::resource('/komoditas/listkomoditas', ListComodityController::class);
+Route::get('/komoditas/listkomoditas/{id}', function(ListComodities $comodities) {
+    return $comodities;
+});
 
 // Comodities - Comodities Price
 Route::get('/komoditas/hargakomoditas', [PriceComodityController::class, 'index']);
 
 // Markets
 Route::get('/pasar', [MarketController::class, 'index']);
+
+// Users - List Users
+Route::get('/pengguna/daftar_pengguna', [UserController::class, 'index']);
+
+// Users - List Roles
+Route::get('/pengguna/daftar_peran', [RoleController::class, 'index']);
 
 // Logs
 

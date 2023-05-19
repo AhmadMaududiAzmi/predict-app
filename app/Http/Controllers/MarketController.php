@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Market;
 use Illuminate\Http\Request;
 
 class MarketController extends Controller
@@ -12,7 +13,8 @@ class MarketController extends Controller
     public function index()
     {
         $pagename = 'Daftar Pasar';
-        return view('markets.index', compact('pagename'));
+        $markets = Market::all();
+        return view('markets.index', compact('pagename', 'markets'));
     }
 
     /**

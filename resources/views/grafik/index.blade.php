@@ -16,6 +16,7 @@
           <span class="btn-icon-label">
             <i data-feather="filter" class="me-2"></i>
             <span>Prediksi</span>
+            {{-- <span>Prediksi{{ $predict }}</span> --}}
           </span>
         </button>
       </div>
@@ -92,6 +93,33 @@
           </table>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+{{-- Modal --}}
+<div class="modal fade" id="addModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="delete" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateComodityLabel">Prediksi Harga Komoditas</h5>
+        <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close" title="Tutup">
+          <i data-feather="x"></i>
+        </button>
+      </div>
+      <form action="{{ route('grafik.create') }}" class="modal-body row g-3 requires-validation" method="POST" enctype="multipart/form-data"
+        novalidate>
+        {{-- @csrf --}}
+        <div class="col-12">
+          <label for="komoditas" class="form-label">Komoditas</label>
+          <select name="komoditas-id" id="komoditas-option" class="form-control">
+            @foreach ($comodities as $item)
+                <option value="{{ $item->id }}">{{ $item->nama_komoditas }}</option>
+            @endforeach
+          </select>
+        </div>
+      </form>
     </div>
   </div>
 </div>

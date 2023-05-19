@@ -29,31 +29,33 @@
                 </tr>
             </thead>
             <tbody>
-                {{-- @foreach ($comodities as $item)
+                @foreach ($comodities as $item)
                 <tr>
-                    <td class="col-number">{{ $loop->iteration }}</td>
-                    <td>
-
+                    <td class="col-number">
+                        {{ $loop->iteration }}
                     </td>
                     <td>
-
+                        {{ $item->kategori }}
                     </td>
                     <td>
-
+                        {{ $item->nama_komoditas }}
+                    </td>
+                    <td>
+                        {{ $item->satuan }}
                     </td>
                     <td class="col-actions">
                         <a title="Perbarui" class="btn-table-action update me-2" data-bs-toggle="modal"
-                            data-bs-target="#update-modal" data-bs-act="{{ route('hipam.update', $hp->id) }}"
-                            data-bs-name="{{ $hp->name }}" data-bs-subdistrict="{{ $hp->psub_district_id }}"
-                            data-bs-district="{{ $hp->pdistrict_id }}"
-                            data-bs-subvillage="{{ $hp->psub_village_id }}"><i data-feather="refresh-cw"></i></a>
+                            data-bs-target="#update-modal" data-bs-act="{{ route('listkomoditas.update', $item->id) }}"
+                            data-bs-kategori="{{ $item->kategori }}"
+                            data-bs-nama_komoditas="{{ $item->nama_komoditas }}" data-bs-satuan="{{ $item->satuan }}"><i
+                                data-feather="refresh-cw"></i></a>
                         <a title="Hapus" class="btn-table-action delete" data-bs-toggle="modal"
-                            data-bs-target="#delete-modal" data-bs-id="{{ $hp->id }}"
-                            data-bs-act="{{ route('hipam.destroy', $hp->id) }}" data-bs-name="{{ $hp->name }}"><i
-                                data-feather="trash-2"></i></a>
+                            data-bs-target="#delete-modal" data-bs-id="{{ $item->id }}"
+                            data-bs-act="{{ route('listkomoditas.destroy', $item->id) }}"
+                            data-bs-kategori="{{ $item->kategori }}"><i data-feather="trash-2"></i></a>
                     </td>
                 </tr>
-                @endforeach --}}
+                @endforeach
             </tbody>
         </table>
     </div>
