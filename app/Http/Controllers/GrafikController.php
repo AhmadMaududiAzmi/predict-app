@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PrediksiController;
 use App\Models\ListComodities;
+use App\Models\Market;
 
 class GrafikController extends Controller
 {
@@ -25,7 +26,9 @@ class GrafikController extends Controller
     {
         $pagename = "Grafik Harga Komoditas";
         $predict = $this->predict->index();
-        return view('grafik.index', compact('pagename', 'predict'));
+        $comodities = ListComodities::all();
+        $markets = Market::all();
+        return view('grafik.index', compact('pagename', 'predict', 'comodities', 'markets'));
     }
 
     /**

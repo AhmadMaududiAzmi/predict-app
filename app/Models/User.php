@@ -17,10 +17,25 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+    public function getRedirectRoute()
+    {
+        return match((int)$this->id) {
+            1 => 'dashboard'
+        };
+    }
+
+    protected $table = 'users';
+
     protected $fillable = [
-        'name',
+        'id',
+        'username',
         'email',
+        'email_verified_at',
         'password',
+        'remember_token',
+        'created_at',
+        'updated_at'
     ];
 
     /**

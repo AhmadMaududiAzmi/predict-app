@@ -1,9 +1,9 @@
 <nav id="sidebar" class="sidebar js-sidebar">
   <div class="sidebar-content js-simplebar">
-    <a class="sidebar-brand text-center" href="/">
+    <span class="sidebar-brand text-center">
       {{-- {{$site->title}} --}}
       CPP
-    </a>
+    </span>
 
     <ul class="sidebar-nav">
       <li class="sidebar-item {{ request()->is('dashboard*') ? 'active' : '' }}">

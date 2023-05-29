@@ -14,8 +14,6 @@ class Market extends Model
     protected $fillable = [
         'id',
         'nama_pasar',
-        'kota_kabupaten',
-        'id_pasar',
-        'keterangan'
+        'kota_kab'
     ];
 }

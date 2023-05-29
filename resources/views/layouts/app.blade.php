@@ -3,7 +3,7 @@
 
 <head>
     {{-- CSRF Token --}}
-    {{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,10 +13,13 @@
     <title>CPP - Comodities Price Predict</title>
 
     {{-- Styles --}}
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('/css/app.css') }}">
     <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @yield('lib-style')
     @yield('page-style')
 </head>

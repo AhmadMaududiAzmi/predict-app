@@ -12,7 +12,7 @@
     <div class="card mb-0 h-100 overflow-hidden" id="predictContainer">
       <div class="card-header d-flex align-items-center justify-content-between">
         <h5 class="card-title mb-0"> Grafik Harga Bawang Merah </h5>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
           <span class="btn-icon-label">
             <i data-feather="filter" class="me-2"></i>
             <span>Prediksi</span>
@@ -35,7 +35,7 @@
           </div>
         </div>
       </div>
-      <div class="card-footer">
+      {{-- <div class="card-footer">
         <div class="legend">
           <div class="legend__item legend__item--perencanaan">
             <span class="legend__title"> Perencanaan </span>
@@ -47,15 +47,15 @@
             <span class="legend__title"> Sudah Dibangun </span>
           </div>
         </div>
-      </div>
+      </div> --}}
     </div>
   </div>
   <div class="col-12">
     <div class="card mb-0">
       <div class="card-header d-flex align-items-center justify-content-between">
-        <h5 class="card-title mb-0"> Daftar Komoditas </h5>
+        <h5 class="card-title mb-0"> Daftar Prediksi Harga Komoditas </h5>
         <div class="btn-group">
-          <button type="button" class="btn btn-light-info btn-icon dropdown-toggle" data-bs-toggle="dropdown"
+          <button type="button" class="btn btn-primary btn-icon dropdown-toggle" data-bs-toggle="dropdown"
             aria-expanded="false">
             <i data-feather="external-link" class="d-inline-block d-sm-none"></i>
             <span class="d-none d-sm-inline-block">Download</span>
@@ -81,14 +81,18 @@
             <thead>
               <tr>
                 <th>No.</th>
+                <th>Tanggal</th>
                 <th>Kategori</th>
                 <th>Nama Komoditas</th>
-                <th>Tahun</th>
                 <th>Harga</th>
-                <th>Persentase</th>
               </tr>
             </thead>
             <tbody>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
             </tbody>
           </table>
         </div>
@@ -108,16 +112,69 @@
           <i data-feather="x"></i>
         </button>
       </div>
-      <form action="{{ route('grafik.create') }}" class="modal-body row g-3 requires-validation" method="POST" enctype="multipart/form-data"
-        novalidate>
+      <form action="" class="modal-body row g-3 requires-validation" method="POST"
+        enctype="multipart/form-data" novalidate>
         {{-- @csrf --}}
         <div class="col-12">
           <label for="komoditas" class="form-label">Komoditas</label>
-          <select name="komoditas-id" id="komoditas-option" class="form-control">
+          <select name="komoditas" id="komoditas_option" class="form-control">
+            <option value="">- Pilih -</option>
             @foreach ($comodities as $item)
-                <option value="{{ $item->id }}">{{ $item->nama_komoditas }}</option>
+            <option value="{{ $item->id }}">{{ $item->nama_komoditas }}</option>
             @endforeach
           </select>
+        </div>
+        <div class="col-12">
+          <label for="kota" class="form-label">Kota / Kabupaten</label>
+          <select name="kota" id="kota_option" class="form-control">
+            <option value="">- Pilih -</option>
+            @foreach ($markets as $item)
+            <option value="{{ $item->id }}">{{ $item->kota_kab }}</option>
+            @endforeach
+          </select>
+        </div>
+        <div class="col-12">
+          <label for="pasar" class="form-label">Pasar</label>
+          <select name="pasar" id="pasar_option" class="form-control">
+            <option value="">- Pilih -</option>
+            @foreach ($markets as $item)
+            <option value="{{ $item->id }}">{{ $item->nama_pasar }}</option>
+            @endforeach
+          </select>
+        </div>
+        <div class="col-12">
+          <label for="tanggal" class="form-label">Tanggal</label>
+
+          <div class="col6">
+            <select name="tanggalAwal" id="tanggalAwal-option" class="form-control">
+              <option value="">- Pilih -</option>
+              {{-- @foreach ($comodities as $item)
+              <option value="{{ $item->id }}">{{ $item->nama_komoditas }}</option>
+              @endforeach --}}
+            </select>
+          </div>
+          <div class="col6">
+            <select name="tanggalAkhir" id="tanggalAkhir-option" class="form-control">
+              <option value="">- Pilih -</option>
+              {{-- @foreach ($comodities as $item)
+              <option value="{{ $item->id }}">{{ $item->nama_komoditas }}</option>
+              @endforeach --}}
+            </select>
+          </div>
+        </div>
+        <div class="col-12 d-flex align-items-center justify-content-center">
+          <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">
+            <span class="btn-icon-label">
+              <i data-feather="x" class="me-2"></i>
+              <span> Batal </span>
+            </span>
+          </button>
+          <button type="submit" class="btn btn-success">
+            <span class="btn-icon-label">
+              <i data-feather="refresh-cw" class="me-2"></i>
+              <span> Prediksi </span>
+            </span>
+          </button>
         </div>
       </form>
     </div>

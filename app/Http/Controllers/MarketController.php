@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class MarketController extends Controller
 {
+    const FETCHED_ATTRIBUTE = [
+        'nama_pasar',
+        'kota/kabupaten'
+    ];
+
     /**
      * Display a listing of the resource.
      */
@@ -30,7 +35,17 @@ class MarketController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->only(self::FETCHED_ATTRIBUTE);
+        $markets = Market::created($data);
+        if ($this->responType()) {
+            return response()->json([
+                'succes' => true,
+                'message' => 'Data pasar berhasil ditambah',
+                'data' => $markets
+            ], 200);
+        } else {
+            return redirect('/pasar')->with('message', 'Data berhasil ditambah');
+        }
     }
 
     /**

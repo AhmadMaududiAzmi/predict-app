@@ -40,8 +40,8 @@
                         <div class="text-center">
                             <img src="/img/logo.png" alt="Logo" class="img-fluid mb-4" width="160" height="160"/>
                         </div>
-                        <form action="POST">
-                            {{-- @csrf --}}
+                        <form method="POST" action="{{ route('login') }}">
+                            @csrf
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label class="form-label">Username</label>
