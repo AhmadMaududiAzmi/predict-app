@@ -15,9 +15,9 @@
     {{-- Styles --}}
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="{{ asset('/css/app.css') }}">
     <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @yield('lib-style')
@@ -41,7 +41,7 @@
     <script src="{{ asset('/js/app.js') }}"></script>
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @yield('lib-script')
     @yield('page-script')
 </body>

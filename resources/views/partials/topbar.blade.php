@@ -3,7 +3,7 @@
 		<i class="hamburger align-self-center"></i>
 	</a>
 
-	<h3 class="fw-bold mb-0 me-3">{{ $pagename }}</h3>
+	{{-- <h3 class="fw-bold mb-0 me-3">{{ $pagename }}</h3> --}}
 
 	<div class="navbar-collapse collapse">
 		<ul class="navbar-nav navbar-align">
@@ -38,7 +38,7 @@
 	aria-labelledby="delete" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered modal-sm">
 		<div class="modal-content">
-			<form id="delete-form" action="/signout">
+			<form id="delete-form" action="/logout" method="POST">
 				@csrf
 				<div class="modal-header">
 					<h5 class="modal-title" id="delete">Konfirmasi</h5>

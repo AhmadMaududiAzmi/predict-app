@@ -68,7 +68,7 @@
                     <i data-feather="x"></i>
                 </button>
             </div>
-            <form class="modal-body row g-3 requires-validation" action="{{ route('market.store') }}" method="post" enctype="multipart/form-data"
+            <form class="modal-body row g-3 requires-validation" action="{{ route('store') }}" method="post" enctype="multipart/form-data"
                 novalidate>
                 {{-- @csrf --}}
                 <div class="col-12">

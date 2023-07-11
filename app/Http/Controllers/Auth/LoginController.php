@@ -32,27 +32,9 @@ class LoginController extends Controller
     {
         $role = Auth::user()->id;
         switch ($role) {
-            case '1':
-                return '/dashboard';
-                break;
             default:
                 return '/login';
             break;
         }
-    }
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest')->except('logout');
-    }
-
-    public function username()
-    {
-        return 'username';
     }
 }

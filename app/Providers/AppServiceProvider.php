@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Providers;
+
+use App\Services\FlaskApiService;
 use \Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 

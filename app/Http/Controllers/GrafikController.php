@@ -6,29 +6,22 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\PrediksiController;
 use App\Models\ListComodities;
 use App\Models\Market;
+use App\Services\FlaskApiService;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class GrafikController extends Controller
 {
-    /**
-     * Memanggil variabel pada controller lain (pada kasus ini dalam file .py)
-     */
-    protected $predict;
-
-    public function __construct(PrediksiController $predict)
-    {
-        $this->predict = $predict;
-    }
-    
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $pagename = "Grafik Harga Komoditas";
-        $predict = $this->predict->index();
         $comodities = ListComodities::all();
-        $markets = Market::all();
-        return view('grafik.index', compact('pagename', 'predict', 'comodities', 'markets'));
+        $markets = Market::distinct('kota_kab')->get();
+        return view('grafik.index', compact('pagename', 'comodities', 'markets'));
     }
 
     /**
@@ -62,7 +55,10 @@ class GrafikController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // $markets = Market::all();
+        // $uniqueData = $markets->unique();
+
+        // return view('grafik.index', ['data'=>$uniqueData]);        
     }
 
     /**
@@ -87,5 +83,50 @@ class GrafikController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Processing dataframe (get process from API)
+     */
+    public function processData()
+    {
+        $client = new Client([
+            'base_url' => 'http://127.0.0.1:8008/api/v1/getdataframe'
+        ]);
+
+        try{
+            $response = $client->get('/api/v1/getdataframe');
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            return response()->json($data);
+        } catch (\Exception $e){
+            // Tambahkan sintaks jika terjadi error dalam proses pengolahan data
+        }
+    }
+
+    /**
+     * Show graph of data (get data from API)
+     */
+    public function showGraph()
+    {
+        $client = new Client();
+        $base_url = 'http://127.0.0.1:8008/api/v1/prediksi';
+
+        try{
+            $response = $client->get($base_url);
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            $labels = [];
+            $values = [];
+
+            foreach ($data as $item){
+                $labels = $item['tanggal'];
+                $values = $item['harga_current'];
+            }
+
+            return view('grafik.index', compact('labels', 'values'));
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Terjadi kesalahan.'], 500);
+        }
     }
 }

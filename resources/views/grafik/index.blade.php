@@ -12,7 +12,7 @@
     <div class="card mb-0 h-100 overflow-hidden" id="predictContainer">
       <div class="card-header d-flex align-items-center justify-content-between">
         <h5 class="card-title mb-0"> Grafik Harga Bawang Merah </h5>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#predictModal">
           <span class="btn-icon-label">
             <i data-feather="filter" class="me-2"></i>
             <span>Prediksi</span>
@@ -22,17 +22,9 @@
       </div>
       <div class="card-body p-0">
         <div class="panel">
-          {{-- <div class="overlay text-center">
-            <div class="overlay-loading">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-            <span class="d-inline-block">Sedang memuat grafik</span>
+          {{-- <div id="grafik">
           </div> --}}
-          <div id="grafik">
-          </div>
+          <canvas id="myChart"></canvas>
         </div>
       </div>
       {{-- <div class="card-footer">
@@ -102,7 +94,7 @@
 </div>
 
 {{-- Modal --}}
-<div class="modal fade" id="addModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+<div class="modal fade" id="predictModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
   aria-labelledby="delete" aria-hidden="true">
   <div class="modal-dialog modal-sm modal-dialog-centered">
     <div class="modal-content">
@@ -112,9 +104,9 @@
           <i data-feather="x"></i>
         </button>
       </div>
-      <form action="" class="modal-body row g-3 requires-validation" method="POST"
-        enctype="multipart/form-data" novalidate>
-        {{-- @csrf --}}
+      <form action="" class="modal-body row g-3 requires-validation" method="POST" enctype="multipart/form-data"
+        novalidate>
+        @csrf
         <div class="col-12">
           <label for="komoditas" class="form-label">Komoditas</label>
           <select name="komoditas" id="komoditas_option" class="form-control">
@@ -183,38 +175,29 @@
 @endsection
 
 @section('lib-script')
-{{-- <script src="/js/highstock.js"></script> --}}
-<script src="https://code.highcharts.com/stock/highstock.js"></script>
-<script src="https://code.highcharts.com/stock/modules/data.js"></script>
-<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 @endsection
 
 @section('page-script')
 <script>
-  Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
+const ctx = document.getElementById('myChart');
 
-// Create the chart
-Highcharts.stockChart('grafik', {
-
-  rangeSelector: {
-    selected: 1
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    datasets: [{
+      label: 'Data per bulan',
+      data: [19000, 20000, 18500, 17000, 15000, 19000, 19000, 20000, 21000, 20000, 19000, 20000],
+      borderWidth: 1
+    }]
   },
-
-  // title: {
-  //   text: 'Grafik Harga Komoditas'
-  // },
-
-  series: [{
-    name: 'AAPL Stock Price',
-    data: data,
-    type: 'spline',
-    tooltip: {
-      valueDecimals: 2
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true
+      }
     }
-  }]
-});
+  }
 });
 </script>
 @endsection
