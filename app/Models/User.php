@@ -28,14 +28,10 @@ class User extends Authenticatable
     protected $table = 'users';
 
     protected $fillable = [
-        'id',
+        'name',
         'username',
         'email',
-        'email_verified_at',
         'password',
-        'remember_token',
-        'created_at',
-        'updated_at'
     ];
 
     /**

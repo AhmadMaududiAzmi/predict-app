@@ -7,15 +7,18 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {{-- <meta name="description" content="{{ $site->desc }}"> --}}
+    {{--
+    <meta name="description" content="{{ $site->desc }}"> --}}
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {{-- <link rel="icon" href="{{ url('/'.$site->favicon) }}" sizes="32x32"> --}}
+    {{--
+    <link rel="icon" href="{{ url('/'.$site->favicon) }}" sizes="32x32"> --}}
     <title>CPP - Comodities Price Predict</title>
 
     {{-- Styles --}}
-    <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="{{ asset('/css/app.css') }}">
     <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
@@ -42,6 +45,9 @@
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     @yield('lib-script')
     @yield('page-script')
 </body>

@@ -46,7 +46,7 @@
         </a>
       </li>
 
-      <li class="sidebar-header">
+      {{-- <li class="sidebar-header">
         Pengaturan
       </li>
 
@@ -84,6 +84,6 @@
           <i class="align-middle" data-feather="terminal"></i> <span class="align-middle">Log Sistem</span>
         </a>
       </li>
-    </ul>
+    </ul> --}}
   </div>
 </nav>

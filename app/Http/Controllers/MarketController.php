@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class MarketController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     const FETCHED_ATTRIBUTE = [
         'nama_pasar',
         'kota/kabupaten'

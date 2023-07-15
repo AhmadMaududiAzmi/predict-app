@@ -40,11 +40,14 @@
                         <div class="text-center">
                             <img src="/img/logo.png" alt="Logo" class="img-fluid mb-4" width="160" height="160"/>
                         </div>
-                        <form method="POST" action="{{ route('login') }}">
+                        @if($message = Session::get('error'))
+                            <p align="center">{{ $message }}</p>
+                        @endif
+                        <form method="POST" action="{{ url('login_user') }}">
                             @csrf
                             <div class="row g-3">
                                 <div class="col-12">
-                                    <label class="form-label">Username</label>
+                                    <label class="form-label">{{ __('Email Address or Username') }}</label>
                                     <input class="form-control @error('username') is-invalid @enderror" type="text"
                                         name="username" id="username" value="{{ old('username') }}" autofocus>
                                     @error('username')
@@ -55,7 +58,7 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <label for="login-password" class="form-label">Password</label>
+                                    <label for="login-password" class="form-label">{{ __('Password') }}</label>
                                     <div class="input-group">
                                         <input class="form-control @error('password') is-invalid @enderror"
                                             type="password" id="login-password" name="password" required

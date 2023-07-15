@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
-@section('')
+@section('lib-style')
 @endsection
 
-@section('')
+@section('page-style')
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 @endsection
 
 @section('content')
@@ -60,31 +61,26 @@
       </div>
       <div class="card-body">
         <div class="main-table rounded">
-          <div class="overlay" id="overlayTable">
-            <div class="overlay-loading">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-            <span class="d-inline-block text-white">Sedang memuat data</span>
-          </div>
           <table class="table table-striped" id="comoditiesTable">
             <thead>
               <tr>
                 <th>No.</th>
                 <th>Tanggal</th>
-                <th>Kategori</th>
                 <th>Nama Komoditas</th>
+                <th>Nama Pasar</th>
                 <th>Harga</th>
               </tr>
             </thead>
             <tbody>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <tr>
+                {{-- @foreach ($data as $key=>$item)
+                <td>{{ $key+1 }}</td>
+                <td>{{ $item->tanggal }}</td>
+                <td>{{ $item->nm_komoditas }}</td>
+                <td>{{ $item->nm_pasar }}</td>
+                <td>0</td>
+                @endforeach --}}
+              </tr>
             </tbody>
           </table>
         </div>
@@ -100,11 +96,8 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="updateComodityLabel">Prediksi Harga Komoditas</h5>
-        <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close" title="Tutup">
-          <i data-feather="x"></i>
-        </button>
       </div>
-      <form action="" class="modal-body row g-3 requires-validation" method="POST" enctype="multipart/form-data"
+      <form action="" class="modal-body row g-3 requires-validation" method="GET" enctype="multipart/form-data"
         novalidate>
         @csrf
         <div class="col-12">
@@ -135,24 +128,12 @@
           </select>
         </div>
         <div class="col-12">
-          <label for="tanggal" class="form-label">Tanggal</label>
-
-          <div class="col6">
-            <select name="tanggalAwal" id="tanggalAwal-option" class="form-control">
-              <option value="">- Pilih -</option>
-              {{-- @foreach ($comodities as $item)
-              <option value="{{ $item->id }}">{{ $item->nama_komoditas }}</option>
-              @endforeach --}}
-            </select>
-          </div>
-          <div class="col6">
-            <select name="tanggalAkhir" id="tanggalAkhir-option" class="form-control">
-              <option value="">- Pilih -</option>
-              {{-- @foreach ($comodities as $item)
-              <option value="{{ $item->id }}">{{ $item->nama_komoditas }}</option>
-              @endforeach --}}
-            </select>
-          </div>
+          <label for="tanggalAwal" class="form-label">Tanggal Awal</label>
+          <input type="text" id="datepickerStart" name="tanggal" class="form-control">
+        </div>
+        <div class="col-12">
+          <label for="tanggalAkhir" class="form-label">Tanggal Akhir</label>
+          <input type="text" id="datepickerEnd" name="tanggal" class="form-control">
         </div>
         <div class="col-12 d-flex align-items-center justify-content-center">
           <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">
@@ -175,11 +156,13 @@
 @endsection
 
 @section('lib-script')
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 @endsection
 
 @section('page-script')
+{{-- Grafik --}}
 <script>
-const ctx = document.getElementById('myChart');
+  const ctx = document.getElementById('myChart');
 
 new Chart(ctx, {
   type: 'line',
@@ -199,5 +182,21 @@ new Chart(ctx, {
     }
   }
 });
+</script>
+
+{{-- Modal --}}
+<script>
+  // Datepicker
+  $(document).ready(function() {
+      $('#datepickerStart').datepicker({
+          dateFormat: 'dd-mm-yy'
+      });
+  });
+
+  $(document).ready(function() {
+      $('#datepickerEnd').datepicker({
+          dateFormat: 'dd-mm-yy'
+      });
+    });
 </script>
 @endsection

@@ -19,4 +19,9 @@ class PriceComodities extends Model
         'id_komuditas',
         'harga_current'
     ];
+
+    public function pasar()
+    {
+        return $this->belongsTo(Market::class, 'nm_pasar', 'nama_pasar');
+    }
 }

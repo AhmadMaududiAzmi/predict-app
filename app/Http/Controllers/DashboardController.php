@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ListComodities;
+use App\Models\Market;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class DashboardController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     /**
      * Display a listing of the resource.
@@ -19,8 +21,8 @@ class DashboardController extends Controller
     public function index()
     {
         $pagename = "Dashboard";
-        $com_amount = 9;
-        $markets = 116;
+        $com_amount = ListComodities::count('id');
+        $markets = Market::count('id');
         $day_prediction = 30;
         $accuracy = "0,2%";
         return view('dashboard', compact('pagename', 'com_amount', 'markets', 'day_prediction', 'accuracy'));

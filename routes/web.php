@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExampleController;
 use App\Http\Controllers\PrediksiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DetailController;
 use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\ListComodityController;
 use App\Http\Controllers\MarketController;
@@ -32,15 +33,20 @@ use Illuminate\Support\Facades\Http;
 // Auth
 Auth::routes();
 // Route::get('/login', [LoginController::class, 'index'])->name('login');
-// Route::post('/login', [LoginController::class, 'authenticate']);
+Route::post('/login_user', [LoginController::class, 'loginUser']);
 // Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+Route::get('/', function(){
+    return redirect('login');
+});
 
 // Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
 // Grafik
 Route::resource('/grafik', GrafikController::class);
+// Route::get('/grafik/{request}', [GrafikController::class, 'store'])->name('grafik.store');
+// Route::get('/grafik', [GrafikController::class, 'index']);
   
 // Comodities - List Comodity
 Route::resource('/komoditas/listkomoditas', ListComodityController::class);
@@ -49,11 +55,10 @@ Route::get('/komoditas/listkomoditas/{id}', function(ListComodities $comodities)
 });
    
 // Comodities - Detail Comodities
-// Route::resource('user', UserController::class);
-Route::get('/detail', function(){
-    $pagename = "Detail Komoditas";
-    return view('detail.index', compact('pagename'));
-});
+Route::get('/detail/{id}', [DetailController::class, 'index']);
+Route::post('/detail/{id}', [DetailController::class, 'index']);
+Route::get('/detail/{id}', [DetailController::class, 'store'])->name('grafik.store');
+Route::get('/detail/{id}', [DetailController::class, 'show']);
     
 // Comodities - Comodities Price
 Route::get('/komoditas/hargakomoditas', [PriceComodityController::class, 'index']);

@@ -3,7 +3,7 @@
 		<i class="hamburger align-self-center"></i>
 	</a>
 
-	{{-- <h3 class="fw-bold mb-0 me-3">{{ $pagename }}</h3> --}}
+	<h3 class="fw-bold mb-0 me-3">{{ $pagename }}</h3>
 
 	<div class="navbar-collapse collapse">
 		<ul class="navbar-nav navbar-align">
@@ -21,12 +21,14 @@
 				</a>
 				<div class="dropdown-menu dropdown-menu-end">
 					{{-- <a class="dropdown-item" href="{{ route('users.editprofil', auth()->user()->id) }}"> --}}
-						<a class="dropdown-item" href="">
-							<i class="align-middle me-1" data-feather="user"></i> Profil
-						</a>
-						<a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirm-modal">
+						<a class="dropdown-item" style="cursor: pointer"
+							onclick="document.forms['logout_id'].submit() ;">
 							<i class="align-middle me-1" data-feather="log-out"></i> Keluar
 						</a>
+						<form method="POST" name="logout_id" action="{{ route('logout') }}" style="display: none">
+							{{ csrf_field() }}
+							...
+						</form>
 				</div>
 			</li>
 		</ul>

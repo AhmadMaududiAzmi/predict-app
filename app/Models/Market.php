@@ -16,4 +16,9 @@ class Market extends Model
         'nama_pasar',
         'kota_kab'
     ];
+
+    public function hargaKomoditas()
+    {
+        return $this->hasMany(PriceComodities::class. 'nm_pasar', 'nama_pasar');
+    }
 }

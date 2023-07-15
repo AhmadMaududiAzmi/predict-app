@@ -49,6 +49,8 @@
                             data-bs-kategori="{{ $item->kategori }}"
                             data-bs-nama_komoditas="{{ $item->nama_komoditas }}" data-bs-satuan="{{ $item->satuan }}"><i
                                 data-feather="refresh-cw"></i></a>
+                        <a title="Detail" class="btn-table-action" data-bs-id="{{ $item->id }}" href="/detail/{{ $item->id }}"><i
+                                data-feather="eye"></i></a>
                         <a title="Hapus" class="btn-table-action delete" data-bs-toggle="modal"
                             data-bs-target="#delete-modal" data-bs-id="{{ $item->id }}"
                             data-bs-act="{{ route('listkomoditas.destroy', $item->id) }}"
