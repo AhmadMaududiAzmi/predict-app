@@ -12,6 +12,7 @@ use App\Http\Controllers\MarketController;
 use App\Http\Controllers\PriceComodityController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DataController;
 use App\Models\DaftarKomoditas;
 use App\Models\ListComodities;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,9 @@ use Illuminate\Support\Facades\Http;
 |
 */
 
+//data
+Route::get('/data', [DataController::class, 'data']);
+Route::get('/filter', [DataController::class, 'getNotInt']);
 
 // Auth
 Auth::routes();
