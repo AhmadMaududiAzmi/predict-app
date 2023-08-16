@@ -50,7 +50,7 @@ class GrafikController extends Controller
                 $data['data_valid'] = $hitEncode['data_valid'];
                 $data['data_train'] = $hitEncode['data_train'];
                 $data['filename'] = 'http://127.0.0.1:8008/api/v1/get_chart?name='.$hitEncode['filename'];
-               dd($data);
+               // dd($data);
             }else{
                 $url = 'http://127.0.0.1:8008/api/v1/predict?komoditas_id='.$request->komoditas.'&pasar_id='.$request->pasar.'&start_date='.$request->tanggal_start.'&end_date='.$request->tanggal_end.'';
                 $hit = $this->processData($url);
