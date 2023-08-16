@@ -11,7 +11,7 @@ use App\Services\FlaskApiService;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-
+use Carbon\Carbon;
 class GrafikController extends Controller
 {
     public function __construct()
@@ -22,12 +22,74 @@ class GrafikController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $pagename = "Grafik Harga Komoditas";
-        $comodities = ListComodities::all();
-        $markets = Market::groupBy('kota_kab')->get();
-        return view('grafik.index', compact('pagename', 'comodities', 'markets'));
+        $comodities = DB::table('daftar_komoditas')->where('status','ada')->get();
+        $markets = DB::table('daftar_pasar')->get();
+        $image = null;
+        $data = [
+            'data_predictions'=>null,
+            'data_valid'=>null,
+            'data_train'=>null,
+            'filename'=>null
+        ];
+        if(count($request->all()) > 0)
+        {
+            $check = DB::table('hasil_prediksi')
+                    ->where('pasar_id',$request->pasar)
+                    ->where('komoditas_id',$request->komoditas)
+                    ->where('start_date',$request->tanggal_start)
+                    ->where('end_date',$request->tanggal_end)
+                    ->first();
+            if($check)
+            {
+               //if one
+                $hitEncode = json_decode($check->data,true);
+                $data['data_predictions'] = $hitEncode['data_predictions'];
+                $data['data_valid'] = $hitEncode['data_valid'];
+                $data['data_train'] = $hitEncode['data_train'];
+                $data['filename'] = 'http://127.0.0.1:8008/api/v1/get_chart?name='.$hitEncode['filename'];
+               dd($data);
+            }else{
+                $url = 'http://127.0.0.1:8008/api/v1/predict?komoditas_id='.$request->komoditas.'&pasar_id='.$request->pasar.'&start_date='.$request->tanggal_start.'&end_date='.$request->tanggal_end.'';
+                $hit = $this->processData($url);
+                $hitEncode = json_decode($hit,true);
+
+                sleep(3);
+
+                $data['data_predictions'] = $hitEncode['data_predictions'];
+                $data['data_valid'] = $hitEncode['data_valid'];
+                $data['data_train'] = $hitEncode['data_train'];
+                $data['filename'] = 'http://127.0.0.1:8008/api/v1/get_chart?name='.$hitEncode['filename'];
+
+                DB::table('hasil_prediksi')->insert([
+                    'komoditas_id'=>$request->komoditas,
+                    'pasar_id'=>$request->pasar,
+                    'start_date'=>$request->tanggal_start,
+                    'end_date'=>$request->tanggal_end,
+                    'data'=>$hit,
+                    'created_at'=>Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s')
+                ]);
+            }
+
+           // dd($data);
+        }
+
+        $comoditiesSelectedValue = null;
+        $comoditiesSelected = DB::table('daftar_komoditas')->where('id',$request->komoditas)->first();
+        if($comoditiesSelected)
+        {
+            $comoditiesSelectedValue = $comoditiesSelected->nama_komoditas;
+        }
+
+        $pasarSelectedValue = null;
+        $pasarSelected = DB::table('daftar_komoditas')->where('id',$request->komoditas)->first();
+        if($pasarSelected)
+        {
+            $pasarSelectedValue = $pasarSelected->nama_komoditas;
+        }
+        return view('grafik.index', compact('pagename', 'comodities', 'markets','data','request','pasarSelectedValue','comoditiesSelectedValue'));
     }
 
     /**
@@ -106,21 +168,12 @@ class GrafikController extends Controller
     /**
      * Processing dataframe (get process from API)
      */
-    public function processData()
+    public function processData($url)
     {
-        $client = new Client([
-            'base_url' => 'http://127.0.0.1:8008/api/v1/getdataframe'
-        ]);
-
-        try{
-            $response = $client->get('/api/v1/getdataframe');
-            $data = json_decode($response->getBody()->getContents(), true);
-
-            return response()->json($data);
-        } catch (\Exception $e){
-            // Sintaks jika terjadi error dalam proses pengolahan data
-            return response()->json(['error'=>$e->getMessage()], 500);
-        }
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        return $response;
     }
 
     /**
