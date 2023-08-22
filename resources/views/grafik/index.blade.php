@@ -12,7 +12,11 @@
   <div class="col-12">
     <div class="card mb-0 h-100 overflow-hidden" id="predictContainer">
       <div class="card-header d-flex align-items-center justify-content-between">
-        <h5 class="card-title mb-0"> Grafik Harga Komoditas {{$comoditiesSelectedValue}} di {{$pasarSelectedValue}} {{$request->tanggal_start}} sampai {{$request->tanggal_end}}</h5>
+        <h5 class="card-title mb-0"> Grafik Harga Komoditas 
+          @if(count($request->all()) > 0)
+            {{$comoditiesSelectedValue}} di {{$pasarSelectedValue}} {{$startDate}} sampai {{$endDate}}
+          @endif
+        </h5>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#predictModal">
           <span class="btn-icon-label">
             <i data-feather="filter" class="me-2"></i>
@@ -26,14 +30,36 @@
         </div>
       </div>
       <div class="card-header d-flex align-items-center justify-content-between">
-        <h5 class="card-title mb-0"> Grafik Harga Komoditas {{$comoditiesSelectedValue}} di {{$pasarSelectedValue}} {{$request->tanggal_start}} sampai {{$request->tanggal_end}}</h5>
-        <button class="btn btn-success">
-          <span class="btn-icon-label">
-            <span>Next Predict</span>
-            <i data-feather="arrow-right" class="me-2"></i>
-          </span>
-        </button>
+        <h5 class="card-title mb-0"> Grafik Harga Komoditas 
+          @if(count($request->all()) > 0)
+          {{$comoditiesSelectedValue}} di {{$pasarSelectedValue}} {{$startDate}} sampai {{$endDate}}
+          @endif
+        </h5>
       </div>
+      @if(count($request->all()) > 0)
+      <div class="col-md-12 row card-header">
+        <form action="{{url('grafik')}}" class="modal-body row g-3 requires-validation">
+        <div class="col-md-4" align="right">
+          <label>Isi hari next predict</label>
+        </div>
+        <div class="col-md-6">
+          <input type="hidden" name="tanggal_start" value="{{$startDate}}">
+          <input type="hidden" name="tanggal_end" value="{{$endDate}}">
+          <input type="hidden" name="pasar" value="{{$request->pasar}}">
+          <input type="hidden" name="komoditas" value="{{$request->komoditas}}">
+          <input type="number" required name="next_predict" class="form-control" placeholder="Contoh : 30">
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-success" type="submit">
+            <span class="btn-icon-label">
+              <span>Next Predict</span>
+              <i data-feather="arrow-right" class="me-2"></i>
+            </span>
+          </button>
+        </div>
+      </form>
+      </div>
+      @endif
     </div>
   </div>
   <div class="col-12">
@@ -65,15 +91,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                {{-- @foreach ($data as $key=>$item)
-                <td>{{ $key+1 }}</td>
-                <td>{{ $item->tanggal }}</td>
-                <td>{{ $item->nm_komoditas }}</td>
-                <td>{{ $item->nm_pasar }}</td>
-                <td>0</td>
-                @endforeach --}}
-              </tr>
+              
             </tbody>
           </table>
         </div>
@@ -82,7 +100,7 @@
   </div>
 </div>
 
-{{-- Modal --}}
+<!-- Modal -->
 <div class="modal fade" id="predictModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
   aria-labelledby="delete" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -116,12 +134,12 @@
         <div class="col-12">
           <label for="tanggalAwal" class="form-label">Tanggal Awal</label>
           <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_start" class="form-control" 
-                 value="{{$request->tanggal_start}}">
+                 value="{{$startDate}}">
         </div>
         <div class="col-12">
           <label for="tanggalAkhir" class="form-label">Tanggal Akhir</label>
           <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_end" class="form-control" 
-                 value="{{$request->tanggal_end}}">
+                 value="{{$endDate}}">
         </div>
         <div class="col-12 d-flex align-items-center justify-content-center">
           <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">
@@ -148,43 +166,5 @@
 @endsection
 
 @section('page-script')
-{{-- Grafik --}}
-<script>
-  const ctx = document.getElementById('myChart');
 
-new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-    datasets: [{
-      label: 'Data per bulan',
-      data: [19000, 20000, 18500, 17000, 15000, 19000, 19000, 20000, 21000, 20000, 19000, 20000],
-      borderWidth: 1
-    }]
-  },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true
-      }
-    }
-  }
-});
-</script>
-
-{{-- Modal --}}
-<script>
-  // Datepicker
-  $(document).ready(function() {
-      $('#datepickerStart').datepicker({
-          dateFormat: 'dd-mm-yy'
-      });
-  });
-
-  $(document).ready(function() {
-      $('#datepickerEnd').datepicker({
-          dateFormat: 'dd-mm-yy'
-      });
-    });
-</script>
 @endsection

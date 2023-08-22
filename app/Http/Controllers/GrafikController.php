@@ -29,51 +29,48 @@ class GrafikController extends Controller
         $markets = DB::table('daftar_pasar')->get();
         $image = null;
         $data = [
-            'data_predictions'=>null,
-            'data_valid'=>null,
-            'data_train'=>null,
-            'filename'=>null
+            'filename'=>null,
+            'next_predict'=>null,
         ];
+        $startDate = null;
+        $endDate = null;
         if(count($request->all()) > 0)
         {
+
+            $startDate = $request->tanggal_start;
+            $endDate = $request->tanggal_end;
+            if($request->next_predict)
+            {
+                $endDate = Carbon::parse($endDate)->addDays($request->next_predict)->format('Y-m-d');
+            }
             $check = DB::table('hasil_prediksi')
                     ->where('pasar_id',$request->pasar)
                     ->where('komoditas_id',$request->komoditas)
-                    ->where('start_date',$request->tanggal_start)
-                    ->where('end_date',$request->tanggal_end)
+                    ->where('start_date',$startDate)
+                    ->where('end_date',$endDate)
                     ->first();
             if($check)
             {
-               //if one
+                //if one
                 $hitEncode = json_decode($check->data,true);
-                $data['data_predictions'] = $hitEncode['data_predictions'];
-                $data['data_valid'] = $hitEncode['data_valid'];
-                $data['data_train'] = $hitEncode['data_train'];
                 $data['filename'] = 'http://127.0.0.1:8008/api/v1/get_chart?name='.$hitEncode['filename'];
-               // dd($data);
             }else{
-                $url = 'http://127.0.0.1:8008/api/v1/predict?komoditas_id='.$request->komoditas.'&pasar_id='.$request->pasar.'&start_date='.$request->tanggal_start.'&end_date='.$request->tanggal_end.'';
+                $url = 'http://127.0.0.1:8008/api/v1/predict?komoditas_id='.$request->komoditas.'&pasar_id='.$request->pasar.'&start_date='.$startDate.'&end_date='.$endDate.'';
                 $hit = $this->processData($url);
                 $hitEncode = json_decode($hit,true);
 
                 sleep(3);
 
-                $data['data_predictions'] = $hitEncode['data_predictions'];
-                $data['data_valid'] = $hitEncode['data_valid'];
-                $data['data_train'] = $hitEncode['data_train'];
                 $data['filename'] = 'http://127.0.0.1:8008/api/v1/get_chart?name='.$hitEncode['filename'];
-
                 DB::table('hasil_prediksi')->insert([
                     'komoditas_id'=>$request->komoditas,
                     'pasar_id'=>$request->pasar,
-                    'start_date'=>$request->tanggal_start,
-                    'end_date'=>$request->tanggal_end,
+                    'start_date'=>$startDate,
+                    'end_date'=>$endDate,
                     'data'=>$hit,
                     'created_at'=>Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s')
                 ]);
             }
-
-           // dd($data);
         }
 
         $comoditiesSelectedValue = null;
@@ -89,7 +86,7 @@ class GrafikController extends Controller
         {
             $pasarSelectedValue = $pasarSelected->nama_komoditas;
         }
-        return view('grafik.index', compact('pagename', 'comodities', 'markets','data','request','pasarSelectedValue','comoditiesSelectedValue'));
+        return view('grafik.index', compact('pagename', 'comodities', 'markets','data','request','pasarSelectedValue','comoditiesSelectedValue','startDate','endDate'));
     }
 
     /**
