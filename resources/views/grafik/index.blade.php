@@ -12,9 +12,9 @@
   <div class="col-12">
     <div class="card mb-0 h-100 overflow-hidden" id="predictContainer">
       <div class="card-header d-flex align-items-center justify-content-between">
-        <h5 class="card-title mb-0"> Grafik Harga Komoditas 
+        <h5 class="card-title mb-0"> Grafik Harga Komoditas
           @if(count($request->all()) > 0)
-            {{$comoditiesSelectedValue}} di {{$pasarSelectedValue}} {{$startDate}} sampai {{$endDate}}
+          {{$comoditiesSelectedValue}} di {{$pasarSelectedValue}} {{$startDate}} sampai {{$endDate}}
           @endif
         </h5>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#predictModal">
@@ -26,38 +26,40 @@
       </div>
       <div class="card-body p-0">
         <div class="panel col-md-12">
-         <img src="{{$data['filename']}}">
+          {{-- Ubah menjadi grafik menggunakan javascript --}}
+          <img src="{{$data['filename']}}">
         </div>
-      </div>
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <h5 class="card-title mb-0"> Grafik Harga Komoditas 
-          @if(count($request->all()) > 0)
-          {{$comoditiesSelectedValue}} di {{$pasarSelectedValue}} {{$startDate}} sampai {{$endDate}}
-          @endif
-        </h5>
       </div>
       @if(count($request->all()) > 0)
-      <div class="col-md-12 row card-header">
+      <div class="col-12 row card-header justify-content-between d-flex align-items-center">
         <form action="{{url('grafik')}}" class="modal-body row g-3 requires-validation">
-        <div class="col-md-4" align="right">
-          <label>Isi hari next predict</label>
-        </div>
-        <div class="col-md-6">
-          <input type="hidden" name="tanggal_start" value="{{$startDate}}">
-          <input type="hidden" name="tanggal_end" value="{{$endDate}}">
-          <input type="hidden" name="pasar" value="{{$request->pasar}}">
-          <input type="hidden" name="komoditas" value="{{$request->komoditas}}">
-          <input type="number" required name="next_predict" class="form-control" placeholder="Contoh : 30">
-        </div>
-        <div class="col-md-2">
-          <button class="btn btn-success" type="submit">
-            <span class="btn-icon-label">
-              <span>Next Predict</span>
-              <i data-feather="arrow-right" class="me-2"></i>
-            </span>
-          </button>
-        </div>
-      </form>
+          <div class="col-3">
+            <label>Isi hari next predict</label>
+          </div>
+          <div class="col-3">
+            <input type="hidden" name="tanggal_start" value="{{$startDate}}">
+            <input type="hidden" name="tanggal_end" value="{{$endDate}}">
+            <input type="hidden" name="pasar" value="{{$request->pasar}}">
+            <input type="hidden" name="komoditas" value="{{$request->komoditas}}">
+            <input type="number" required name="next_predict" class="form-control" placeholder="Contoh : 30">
+          </div>
+          <div class="col-3">
+            <button class="btn btn-success" type="submit">
+              <span class="btn-icon-label">
+                <span>Next Predict</span>
+                <i data-feather="arrow-right" class="me-2"></i>
+              </span>
+            </button>
+          </div>
+          <div class="col-3">
+            <button class="btn btn-success" type="submit">
+              <span class="btn-icon-label">
+                <span>Save Data</span>
+                <i data-feather="arrow-left" class="me-2"></i>
+              </span>
+            </button>
+          </div>
+        </form>
       </div>
       @endif
     </div>
@@ -65,18 +67,40 @@
   <div class="col-12">
     <div class="card mb-0">
       <div class="card-header d-flex align-items-center justify-content-between">
-        <h5 class="card-title mb-0"> Daftar Prediksi Harga Komoditas </h5>
-        <div class="btn-group">
-          <button type="button" class="btn btn-info btn-icon dropdown-toggle" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            <i data-feather="download" class="me-2"></i>
-            <span class="d-none d-sm-inline-block">Download</span>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" id="excel"> <i data-feather="file-text" class="me-2"></i>Excel</a></li>
-            <li><a class="dropdown-item" id="pdf"> <i data-feather="file-text" class="me-2"></i>CSV</a></li>
-          </ul>
+        <h5 class="card-title mb-0"> Daftar Data Uji</h5>
+      </div>
+      <div class="card-body">
+        <div class="main-table rounded">
+          <table class="table table-striped" id="trained_data">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Tanggal Awal</th>
+                <th>Tanggal Akhir</th>
+                <th>Komoditas</th>
+                <th>Pasar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{-- @foreach ($item as $model)
+              <tr>
+                <td>{{ $item->id }}</td>
+                <td>{{ $item->tanggal_awal }}</td>
+                <td>{{ $item->tanggal_akhir }}</td>
+                <td>{{ $item->nm_komoditas }}</td>
+                <td>{{ $item->nm_pasar }}</td>
+              </tr>
+              @endforeach --}}
+            </tbody>
+          </table>
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="card mb-0">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="card-title mb-0"> Daftar Prediksi Harga Komoditas </h5>
       </div>
       <div class="card-body">
         <div class="main-table rounded">
@@ -91,7 +115,7 @@
               </tr>
             </thead>
             <tbody>
-              
+
             </tbody>
           </table>
         </div>
@@ -133,13 +157,13 @@
         </div>
         <div class="col-12">
           <label for="tanggalAwal" class="form-label">Tanggal Awal</label>
-          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_start" class="form-control" 
-                 value="{{$startDate}}">
+          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_start" class="form-control"
+            value="{{$startDate}}">
         </div>
         <div class="col-12">
           <label for="tanggalAkhir" class="form-label">Tanggal Akhir</label>
-          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_end" class="form-control" 
-                 value="{{$endDate}}">
+          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_end" class="form-control"
+            value="{{$endDate}}">
         </div>
         <div class="col-12 d-flex align-items-center justify-content-center">
           <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">
@@ -154,6 +178,9 @@
               <span> Prediksi </span>
             </span>
           </button>
+        </div>
+        <div class="col-12 d-flex align-items-center justify-content-center">
+          <span style="font: 14">*Model akan tersimpan dengan otomatis pada database</span>
         </div>
       </form>
     </div>

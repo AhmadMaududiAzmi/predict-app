@@ -81,10 +81,10 @@ class GrafikController extends Controller
         }
 
         $pasarSelectedValue = null;
-        $pasarSelected = DB::table('daftar_komoditas')->where('id',$request->komoditas)->first();
+        $pasarSelected = DB::table('daftar_pasar')->where('id',$request->pasar)->first();
         if($pasarSelected)
         {
-            $pasarSelectedValue = $pasarSelected->nama_komoditas;
+            $pasarSelectedValue = $pasarSelected->nm_pasar;
         }
         return view('grafik.index', compact('pagename', 'comodities', 'markets','data','request','pasarSelectedValue','comoditiesSelectedValue','startDate','endDate'));
     }

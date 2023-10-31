@@ -49,11 +49,11 @@ class DetailController extends Controller
 
         // $markets = Market::groupBy('kota_kab')->get();
         $data = PriceComodities::join('daftar_pasar', 'harga_komoditas.nm_pasar', '=', 'daftar_pasar.nama_pasar')
-            ->where('harga_komoditas.id_komuditas', '=', $id)
+            ->where('daftar_harga.id_komuditas', '=', $id)
             ->where('kota_kab', '=', $kota_kab)
             ->where('nm_pasar', '=', $nm_pasar)
-            ->get(['harga_komoditas.*', 'daftar_pasar.kota_kab']);
-        return view('detail.index', compact('data'));
+            ->get(['daftar_harga.*', 'daftar_pasar.kota_kab']);
+        return view('detail.index', compact('pagename, data'));
     }
 
     /**
@@ -86,7 +86,7 @@ class DetailController extends Controller
 
         $maxHarga = PriceComodities::max('harga_current');
         $minHarga = PriceComodities::min('harga_current');
-        $avgHarga = DB::table('harga_komoditas')->avg('harga_current');
+        $avgHarga = DB::table('daftar_harga')->avg('harga_current');
         $markets = Market::groupBy('kota_kab')->get();
         return view('detail.index', compact('pagename', 'markets', 'comodities', 'maxHarga', 'minHarga', 'avgHarga', 'harga_current', 'tanggal'));
     }
