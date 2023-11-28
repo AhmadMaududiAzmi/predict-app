@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\PrediksiController;
 use App\Models\ListComodities;
 use App\Models\Market;
+use App\Models\PredictionResults;
 use App\Models\PriceComodities;
 use App\Services\FlaskApiService;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
+
 class GrafikController extends Controller
 {
     public function __construct()
@@ -24,70 +26,64 @@ class GrafikController extends Controller
      */
     public function index(Request $request)
     {
-        $pagename = "Grafik Harga Komoditas";
-        $comodities = DB::table('daftar_komoditas')->where('status','ada')->get();
+        $pagename = 'Grafik Harga Komoditas';
+        $comodities = DB::table('daftar_komoditas')->where('status', 'ada')->get();
         $markets = DB::table('daftar_pasar')->get();
-        $image = null;
-        $data = [
-            'filename'=>null,
-            'next_predict'=>null,
-        ];
         $startDate = null;
         $endDate = null;
-        if(count($request->all()) > 0)
+        $model = null;
+        $data = [
+            'predicted_data' => null,
+            'new_predicted_data' => null
+        ];
+
+        if (count($request->all()) > 0) 
         {
-
-            $startDate = $request->tanggal_start;
-            $endDate = $request->tanggal_end;
-            if($request->next_predict)
-            {
-                $endDate = Carbon::parse($endDate)->addDays($request->next_predict)->format('Y-m-d');
+            $startDate = $request->tanggal_awal;
+            $endDate = $request->tanggal_akhir;
+            if ($request->new_predicted_data) {
+                $endDate = Carbon::parse($endDate)->addDays($request->new_predicted_data)->format('Y-m-d');
             }
-            $check = DB::table('hasil_prediksi')
-                    ->where('pasar_id',$request->pasar)
-                    ->where('komoditas_id',$request->komoditas)
-                    ->where('start_date',$startDate)
-                    ->where('end_date',$endDate)
-                    ->first();
-            if($check)
-            {
-                //if one
-                $hitEncode = json_decode($check->data,true);
-                $data['filename'] = 'http://127.0.0.1:8008/api/v1/get_chart?name='.$hitEncode['filename'];
-            }else{
-                $url = 'http://127.0.0.1:8008/api/v1/predict?komoditas_id='.$request->komoditas.'&pasar_id='.$request->pasar.'&start_date='.$startDate.'&end_date='.$endDate.'';
-                $hit = $this->processData($url);
-                $hitEncode = json_decode($hit,true);
 
+            $check = DB::table('hasil_prediksi')
+                ->where('komoditas_id', $request->pasar)
+                ->where('pasar_id', $request->komoditas)
+                ->where('tanggal_awal', $startDate)
+                ->where('tanggal_akhir', $endDate)
+                ->first();
+
+            if ($check) {
+                // If data is available, retrieve and decode it
+                $data = json_decode($check->predicted_data, true);
+            } else {
+                // If data is not available, fetch new prediction data from an API
+                $trainUrl = 'http://127.0.0.1:8008/api/v1/traindata?komoditas_id=' . $request->komoditas . '&pasar_id=' . $request->pasar . '&start_date=' . $startDate . '&end_date=' . $endDate . '';
+                $hit = $this->proccessData($trainUrl);
+
+                // Wait for 3 seconds
                 sleep(3);
 
-                $data['filename'] = 'http://127.0.0.1:8008/api/v1/get_chart?name='.$hitEncode['filename'];
-                DB::table('hasil_prediksi')->insert([
-                    'komoditas_id'=>$request->komoditas,
-                    'pasar_id'=>$request->pasar,
-                    'start_date'=>$startDate,
-                    'end_date'=>$endDate,
-                    'data'=>$hit,
-                    'created_at'=>Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s')
-                ]);
+                // Decode the fetched prediction data and store it
+                $data['predicted_data'] = json_decode($hit, true);
             }
         }
 
         $comoditiesSelectedValue = null;
-        $comoditiesSelected = DB::table('daftar_komoditas')->where('id',$request->komoditas)->first();
-        if($comoditiesSelected)
-        {
+        $comoditiesSelected = DB::table('daftar_komoditas')->where('id', $request->komoditas)->first();
+        if ($comoditiesSelected) {
             $comoditiesSelectedValue = $comoditiesSelected->nama_komoditas;
         }
 
         $pasarSelectedValue = null;
-        $pasarSelected = DB::table('daftar_pasar')->where('id',$request->pasar)->first();
-        if($pasarSelected)
-        {
+        $pasarSelected = DB::table('daftar_pasar')->where('id', $request->pasar)->first();
+        if ($pasarSelected) {
             $pasarSelectedValue = $pasarSelected->nm_pasar;
         }
+
+        // dd($request->all());
         return view('grafik.index', compact('pagename', 'comodities', 'markets','data','request','pasarSelectedValue','comoditiesSelectedValue','startDate','endDate'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -116,16 +112,16 @@ class GrafikController extends Controller
         $nm_pasar = $request->input('pasar_option');
         $tglAwal = $request->input('datepickerStart');
         $tglAkhir = $request->input('datepickerEnd');
-        
+
         // Ubah sintaks dibawah menjadi PHP
         // SELECT harga_komoditas.*, daftar_pasar.kota_kab FROM harga_komoditas JOIN daftar_pasar ON harga_komoditas.nm_pasar = daftar_pasar.nama_pasar WHERE harga_komoditas.nm_komoditas = 'Gula Pasir Dalam Negri' AND harga_komoditas.nm_pasar = 'Pasar Dinoyo' AND daftar_pasar.kota_kab = 'Kota Malang' AND harga_komoditas.tanggal BETWEEN '2017-01-01' AND '2018-01-01';
-        
-        $data = PriceComodities::join('daftar_pasar', 'harga_komoditas.nm_pasar', '=', 'daftar_pasar.nama_pasar')
-        ->where('harga_komoditas.nm_komoditas', '=', $nm_komoditas)
-        ->where('harga_komoditas.nm_pasar', '=', $nm_pasar)
-        ->where('daftar_pasar.kota_kab', '=', $kota_kab)
-        ->whereBetween('harga_komoditas.tanggal', [$tglAwal, $tglAkhir])
-        ->get(['harga_komoditas.*', 'daftar_pasar.kota_kab']);
+
+        $data = PriceComodities::join('daftar_pasar', 'daftar_harga.nm_pasar', '=', 'daftar_pasar.nm_pasar')
+            ->where('daftar_harga.nama_komoditas', '=', $nm_komoditas)
+            ->where('daftar_harga.nm_pasar', '=', $nm_pasar)
+            ->where('daftar_pasar.kota_kab', '=', $kota_kab)
+            ->whereBetween('harga_komoditas.tanggal', [$tglAwal, $tglAkhir])
+            ->get(['harga_komoditas.*', 'daftar_pasar.kota_kab']);
         // dd($data);
         return redirect('/grafik', compact('data'));
     }
@@ -165,7 +161,7 @@ class GrafikController extends Controller
     /**
      * Processing dataframe (get process from API)
      */
-    public function processData($url)
+    public function proccessData($url)
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -173,29 +169,51 @@ class GrafikController extends Controller
         return $response;
     }
 
-    /**
-     * Show graph of data (get data from API)
-     */
-    public function showGraph()
+    public function saveDataJson(Request $request)
     {
-        $client = new Client();
-        $base_url = 'http://127.0.0.1:8008/api/v1/prediksi';
+        // $data_json = $request->input('data_json');
+        $tanggal_awal = null;
+        $tanggal_akhir = null;
 
-        try{
-            $response = $client->get($base_url);
-            $data = json_decode($response->getBody()->getContents(), true);
+        $check = DB::table('hasil_prediksi')
+            ->where('id_komoditas', $request->pasar)
+            ->where('id_pasar', $request->komoditas)
+            ->where('tanggal_awal', $tanggal_awal)
+            ->where('tanggal_akhir', $tanggal_akhir)
+            ->first();
 
-            $labels = [];
-            $values = [];
+        $hit_encode = json_decode($check->data, true);
 
-            foreach ($data as $item){
-                $labels = $item['tanggal'];
-                $values = $item['harga_current'];
-            }
+        $data_json = 'http://127.0.0.8008/api/v1/traindata?id_komoditas=' . $request->komoditas . '&pasar_id=' . $request->pasar . '&start_date=' . $tanggal_awal . '&end_date=' . $tanggal_akhir . '';
 
-            return view('grafik.index', compact('labels', 'values'));
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Terjadi kesalahan.'], 500);
-        }
+        PredictionResults::create([
+            'data_json' => $data_json
+        ]);
+
+        DB::table('hasil_prediksi')->insert([
+            'id_komoditas' => $request->komoditas,
+            'id_pasar' => $request->pasar,
+            'tanggal_awal' => $tanggal_awal,
+            'tanggal_akhir' => $tanggal_akhir,
+            'data_json' => $hit_encode
+        ]);
+
+        return response()->json(['message' => 'Data saved successfully']);
+    }
+
+    private function saveModelToDatabase($komoditas, $pasar, $start_date, $end_date)
+    {
+        $modelFileName = "model_{$komoditas}_{$pasar}_{$start_date}_{$end_date}.joblib";
+        $modelFilePath = storage_path("/{$modelFileName}");
+        $modelContent = file_get_contents($modelFilePath);
+        DB::table('daftar_model')->insert([
+            'komoditas_id' => $komoditas,
+            'pasar_id' => $pasar,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'model' => $modelContent,
+        ]);
+
+        return $modelFilePath;
     }
 }

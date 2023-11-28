@@ -5,18 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ModelTrained extends Model
+class PredictionResults extends Model
 {
     use HasFactory;
 
-    protected $table = 'daftar_model';
+    protected $table = 'hasil_prediksi';
 
     protected $fillable = [
         'id',
-        'komoditas_id',
-        'pasar_id',
         'tanggal_awal',
         'tanggal_akhir',
-        'model'
+        'id_komoditas',
+        'id_pasar',
+        'id_model',
+        'data_json'
     ];
 }

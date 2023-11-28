@@ -20,41 +20,37 @@
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#predictModal">
           <span class="btn-icon-label">
             <i data-feather="filter" class="me-2"></i>
-            <span>Prediksi</span>
+            <span>Tampilkan</span>
           </span>
         </button>
       </div>
       <div class="card-body p-0">
         <div class="panel col-md-12">
-          {{-- Ubah menjadi grafik menggunakan javascript --}}
-          <img src="{{$data['filename']}}">
+          <canvas id="chart"></canvas>
+          {{-- <img src="{{$data['filename']}}"> --}}
         </div>
       </div>
       @if(count($request->all()) > 0)
       <div class="col-12 row card-header justify-content-between d-flex align-items-center">
         <form action="{{url('grafik')}}" class="modal-body row g-3 requires-validation">
-          <div class="col-3">
-            <label>Isi hari next predict</label>
-          </div>
-          <div class="col-3">
+          <div class="col-6 d-flex justify-content-start">
+            <label>Input data</label>
             <input type="hidden" name="tanggal_start" value="{{$startDate}}">
             <input type="hidden" name="tanggal_end" value="{{$endDate}}">
             <input type="hidden" name="pasar" value="{{$request->pasar}}">
             <input type="hidden" name="komoditas" value="{{$request->komoditas}}">
             <input type="number" required name="next_predict" class="form-control" placeholder="Contoh : 30">
           </div>
-          <div class="col-3">
-            <button class="btn btn-success" type="submit">
+          <div class="col-6 justify-content-end d-flex">
+            <button class="btn btn-success m-1" type="submit">
               <span class="btn-icon-label">
-                <span>Next Predict</span>
+                <span>Predict</span>
                 <i data-feather="arrow-right" class="me-2"></i>
               </span>
             </button>
-          </div>
-          <div class="col-3">
-            <button class="btn btn-success" type="submit">
+            <button class="btn btn-success m-1" type="submit">
               <span class="btn-icon-label">
-                <span>Save Data</span>
+                <span>Save</span>
                 <i data-feather="arrow-left" class="me-2"></i>
               </span>
             </button>
@@ -64,6 +60,7 @@
       @endif
     </div>
   </div>
+
   <div class="col-12">
     <div class="card mb-0">
       <div class="card-header d-flex align-items-center justify-content-between">
@@ -97,6 +94,7 @@
       </div>
     </div>
   </div>
+
   <div class="col-12">
     <div class="card mb-0">
       <div class="card-header d-flex align-items-center justify-content-between">
@@ -175,7 +173,7 @@
           <button type="submit" class="btn btn-success">
             <span class="btn-icon-label">
               <i data-feather="refresh-cw" class="me-2"></i>
-              <span> Prediksi </span>
+              <span> Tampilkan </span>
             </span>
           </button>
         </div>
@@ -190,8 +188,60 @@
 
 @section('lib-script')
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 @endsection
 
 @section('page-script')
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Extract data from PHP and convert it to a format suitable for Chart.js
+    var predictedData = {!! json_encode($data['predicted_data']['Predicted']) !!};
+    var actualData = {!! json_encode($data['predicted_data']['Actual']) !!};
 
+    // Extract timestamps and values for predicted data
+    var predictedLabels = Object.keys(predictedData).map(function(timestamp) {
+      return new Date(parseInt(timestamp)).toLocaleDateString(); // Format the timestamp as a date string
+    });
+    var predictedValues = Object.values(predictedData);
+
+    // Extract timestamps and values for actual data
+    var actualLabels = Object.keys(actualData).map(function(timestamp) {
+      return new Date(parseInt(timestamp)).toLocaleDateString(); // Format the timestamp as a date string
+    });
+    var actualValues = Object.values(actualData);
+
+    // Configure and render the chart
+    var ctx = document.getElementById('chart');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: predictedLabels, // You can use either predictedLabels or actualLabels as per your requirement
+        datasets: [
+          {
+            label: 'Predicted Data',
+            data: predictedValues,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }, 
+          {
+            label: 'Actual Data',
+            data: actualValues,
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        scales: {
+          x: [{
+            type: 'linear',
+            position: 'bottom'
+          }]
+        }
+      }
+    });
+  });
+</script>
 @endsection

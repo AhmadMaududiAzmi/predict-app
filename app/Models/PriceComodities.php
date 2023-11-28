@@ -9,14 +9,13 @@ class PriceComodities extends Model
 {
     use HasFactory;
 
-    protected $table = 'harga_komoditas';
+    protected $table = 'daftar_harga';
 
     protected $fillable = [
         'id',
         'tanggal',
-        'nm_pasar',
-        'nm_komoditas',
-        'id_komuditas',
+        'pasar_id',
+        'komoditas_id',
         'harga_current'
     ];
 

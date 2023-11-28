@@ -49,9 +49,9 @@ class DetailController extends Controller
 
         // $markets = Market::groupBy('kota_kab')->get();
         $data = PriceComodities::join('daftar_pasar', 'harga_komoditas.nm_pasar', '=', 'daftar_pasar.nama_pasar')
-            ->where('daftar_harga.id_komuditas', '=', $id)
+            ->where('daftar_harga.komoditas_id', '=', $id)
             ->where('kota_kab', '=', $kota_kab)
-            ->where('nm_pasar', '=', $nm_pasar)
+            ->where('pasar_id', '=', $nm_pasar)
             ->get(['daftar_harga.*', 'daftar_pasar.kota_kab']);
         return view('detail.index', compact('pagename, data'));
     }
@@ -65,13 +65,13 @@ class DetailController extends Controller
 
         // Grafik
         $harga_current = PriceComodities::select(DB::raw('harga_current'))
-        ->where('id_komuditas', $id)
-        ->where('nm_pasar', '=', 'Pasar Dinoyo')
+        ->where('komoditas_id', $id)
+        ->where('pasar_id', '=', '1')
         ->groupBy(DB::raw('tanggal'))
         ->pluck('harga_current');
         $tanggal = PriceComodities::select(DB::raw('tanggal'))
-        ->where('id_komuditas', $id)
-        ->where('nm_pasar', '=', 'Pasar Dinoyo')
+        ->where('komoditas_id', $id)
+        ->where('pasar_id', '=', '1')
         ->groupBy(DB::raw('tanggal'))
         ->pluck('tanggal');
         // $pasar = PriceComodities::select(DB:raw('nm_pasar'))
@@ -80,7 +80,7 @@ class DetailController extends Controller
         // pluck('nm_pasar');
 
         // Tabel
-        $comodities = PriceComodities::where('id_komuditas', $id)
+        $comodities = PriceComodities::where('komoditas_id', $id)
             ->groupBy('tanggal')
             ->paginate(30);
 
