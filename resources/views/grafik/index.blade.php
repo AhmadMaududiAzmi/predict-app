@@ -27,6 +27,8 @@
       <div class="card-body p-0">
         <div class="panel col-md-12">
           <canvas id="chart"></canvas>
+          <h1>{{ $data->Predicted }}</h1>
+          {{-- <script>grafik("{{ $data['Predicted'] }}")</script> --}}
           {{-- <img src="{{$data['filename']}}"> --}}
         </div>
       </div>
@@ -155,12 +157,12 @@
         </div>
         <div class="col-12">
           <label for="tanggalAwal" class="form-label">Tanggal Awal</label>
-          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_start" class="form-control"
+          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_awal" class="form-control"
             value="{{$startDate}}">
         </div>
         <div class="col-12">
           <label for="tanggalAkhir" class="form-label">Tanggal Akhir</label>
-          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_end" class="form-control"
+          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_akhir" class="form-control"
             value="{{$endDate}}">
         </div>
         <div class="col-12 d-flex align-items-center justify-content-center">
@@ -193,55 +195,58 @@
 
 @section('page-script')
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Extract data from PHP and convert it to a format suitable for Chart.js
-    var predictedData = {!! json_encode($data['predicted_data']['Predicted']) !!};
-    var actualData = {!! json_encode($data['predicted_data']['Actual']) !!};
+  function grafik(predictedData) {
+    console.log(predictedData);
+  }
+  // document.addEventListener('DOMContentLoaded', function() {
+  //   var predictedData = {{ $data['Predicted'] }};
+  //   console.log(predictedData);
+  //   var actualData = {!! json_encode($data['Actual']) !!};
+  //   var ctx = document.getElementById('chart').getContext('2d');
 
-    // Extract timestamps and values for predicted data
-    var predictedLabels = Object.keys(predictedData).map(function(timestamp) {
-      return new Date(parseInt(timestamp)).toLocaleDateString(); // Format the timestamp as a date string
-    });
-    var predictedValues = Object.values(predictedData);
-
-    // Extract timestamps and values for actual data
-    var actualLabels = Object.keys(actualData).map(function(timestamp) {
-      return new Date(parseInt(timestamp)).toLocaleDateString(); // Format the timestamp as a date string
-    });
-    var actualValues = Object.values(actualData);
-
-    // Configure and render the chart
-    var ctx = document.getElementById('chart');
-    var myChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: predictedLabels, // You can use either predictedLabels or actualLabels as per your requirement
-        datasets: [
-          {
-            label: 'Predicted Data',
-            data: predictedValues,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-          }, 
-          {
-            label: 'Actual Data',
-            data: actualValues,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1
-          }
-        ]
-      },
-      options: {
-        scales: {
-          x: [{
-            type: 'linear',
-            position: 'bottom'
-          }]
-        }
-      }
-    });
-  });
+  //   var chart = new Chart(ctx, {
+  //     type: 'line',
+  //     data: {
+  //       labels: Object.keys(predictedData.Predicted).map(date => new Date(parseInt(date))),
+  //       datasets: [
+  //         {
+  //           label: 'Predicted',
+  //           // data: Object.values(predictedData.Predicted),
+  //           data: Object.values(predictedData),
+  //           borderColor: 'rgba(75, 192, 192, 1)',
+  //           borderWidth: 1,
+  //           fill: false
+  //          },
+  //          {
+  //           label: 'Actual',
+  //           // data: Object.values(predictedData.Actual),
+  //           data: Object.values(actualData),
+  //           borderColor: 'rgba(255, 99, 132, 1)',
+  //           borderWidth: 1,
+  //           fill: false
+  //         }
+  //       ]
+  //     },
+  //     options: {
+  //       scales: {
+  //         x: [{
+  //           type: 'time',
+  //           time: {
+  //             parser: 'MMM D',
+  //             unit: 'month',
+  //             displayFormats: {
+  //               day: 'MMM D'
+  //             }
+  //           }
+  //         }],
+  //         y: [{
+  //           ticks: {
+  //             beginAtZero: true
+  //           }
+  //         }]
+  //       }
+  //     }
+  //   });
+  // });
 </script>
 @endsection

@@ -17,7 +17,7 @@ class PredictionResults extends Model
         'tanggal_akhir',
         'id_komoditas',
         'id_pasar',
-        'id_model',
-        'data_json'
+        'model',
+        'predicted_data'
     ];
 }
