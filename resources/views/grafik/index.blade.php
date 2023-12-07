@@ -5,6 +5,42 @@
 
 @section('page-style')
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+  /* Spinner */
+  .spinner-container {
+    position: relative;
+    width: 50px;
+    /* Ubah lebar dan tinggi container sesuai keinginan */
+    height: 50px;
+  }
+
+  .spinner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid #ccc;
+    border-top-color: #ff7f50;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .percentage {
+    position: absolute;
+    top: 55%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    /* Ubah ukuran teks persentase sesuai keinginan */
+    font-weight: bold;
+  }
+</style>
 @endsection
 
 @section('content')
@@ -25,11 +61,12 @@
         </button>
       </div>
       <div class="card-body p-0">
+        <div class="spinner-container d-none" id="spinner">
+          <div class="spinner"></div>
+          <span class="percentage">0%</span>
+        </div>
         <div class="panel col-md-12">
           <canvas id="chart"></canvas>
-          <h1>{{ $data->Predicted }}</h1>
-          {{-- <script>grafik("{{ $data['Predicted'] }}")</script> --}}
-          {{-- <img src="{{$data['filename']}}"> --}}
         </div>
       </div>
       @if(count($request->all()) > 0)
@@ -157,13 +194,13 @@
         </div>
         <div class="col-12">
           <label for="tanggalAwal" class="form-label">Tanggal Awal</label>
-          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_awal" class="form-control"
-            value="{{$startDate}}">
+          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_awal" id="tanggal_awal"
+            class="form-control" value="{{$startDate}}">
         </div>
         <div class="col-12">
           <label for="tanggalAkhir" class="form-label">Tanggal Akhir</label>
-          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_akhir" class="form-control"
-            value="{{$endDate}}">
+          <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_akhir" id="tanggal_akhir"
+            class="form-control" value="{{$endDate}}">
         </div>
         <div class="col-12 d-flex align-items-center justify-content-center">
           <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">
@@ -172,7 +209,7 @@
               <span> Batal </span>
             </span>
           </button>
-          <button type="submit" class="btn btn-success">
+          <button type="submit" class="btn btn-success" onclick="grafik()" id="tampilkan">
             <span class="btn-icon-label">
               <i data-feather="refresh-cw" class="me-2"></i>
               <span> Tampilkan </span>
@@ -195,58 +232,54 @@
 
 @section('page-script')
 <script>
-  function grafik(predictedData) {
-    console.log(predictedData);
-  }
-  // document.addEventListener('DOMContentLoaded', function() {
-  //   var predictedData = {{ $data['Predicted'] }};
-  //   console.log(predictedData);
-  //   var actualData = {!! json_encode($data['Actual']) !!};
-  //   var ctx = document.getElementById('chart').getContext('2d');
+  function grafik() {
+    event.preventDefault();
+    $("#predictModal").modal('hide');
+    $("#spinner").removeClass("d-none");
+      
+    let currentPercentage = 0; // Persentase awal
+    const intervalTime = 100; // Waktu dalam milidetik (1 detik = 1000 milidetik)
+    const increment = 1; // Persentase yang ingin ditambahkan setiap interval
+    const maxPercentage = 80; // Batas maksimum persentase
 
-  //   var chart = new Chart(ctx, {
-  //     type: 'line',
-  //     data: {
-  //       labels: Object.keys(predictedData.Predicted).map(date => new Date(parseInt(date))),
-  //       datasets: [
-  //         {
-  //           label: 'Predicted',
-  //           // data: Object.values(predictedData.Predicted),
-  //           data: Object.values(predictedData),
-  //           borderColor: 'rgba(75, 192, 192, 1)',
-  //           borderWidth: 1,
-  //           fill: false
-  //          },
-  //          {
-  //           label: 'Actual',
-  //           // data: Object.values(predictedData.Actual),
-  //           data: Object.values(actualData),
-  //           borderColor: 'rgba(255, 99, 132, 1)',
-  //           borderWidth: 1,
-  //           fill: false
-  //         }
-  //       ]
-  //     },
-  //     options: {
-  //       scales: {
-  //         x: [{
-  //           type: 'time',
-  //           time: {
-  //             parser: 'MMM D',
-  //             unit: 'month',
-  //             displayFormats: {
-  //               day: 'MMM D'
-  //             }
-  //           }
-  //         }],
-  //         y: [{
-  //           ticks: {
-  //             beginAtZero: true
-  //           }
-  //         }]
-  //       }
-  //     }
-  //   });
-  // });
+    function updateSpinner(percentage) {
+      const spinner = $('.spinner');
+      const percentageText = $('.percentage');
+
+      const rotation = percentage / 100 * 360;
+      spinner.css('transform', `rotate(${rotation}deg)`);
+      percentageText.text(`${percentage}%`);
+    }
+
+    const timer = setInterval(() => {
+      if (currentPercentage <= maxPercentage) {
+        updateSpinner(currentPercentage);
+        currentPercentage += increment;
+      } else {
+        currentPercentage %= 100; // Setel ulang persentase ke 0 setelah mencapai batas
+      }
+    }, intervalTime);
+
+    let komoditas = $("#komoditas_option").val();
+    let pasar = $("#pasar_option").val();
+    let tanggal_awal = $("#tanggal_awal").val();
+    let tanggal_akhir = $("#tanggal_akhir").val();
+
+    $.ajax({
+                type: "get",
+                url: "/grafik",
+                data: {
+                  komoditas:komoditas,
+                  pasar:pasar,
+                  tanggal_awal:tanggal_awal,
+                  tanggal_akhir:tanggal_akhir
+                },
+                dataType: "json",
+                success: function(response) {
+                    $("#spinner").addClass("d-none");
+                    console.log(response);
+                }
+            });
+  }
 </script>
 @endsection

@@ -26,6 +26,7 @@ class GrafikController extends Controller
      */
     public function index(Request $request)
     {
+        
         $pagename = 'Grafik Harga Komoditas';
         $comodities = DB::table('daftar_komoditas')->where('status', 'ada')->get();
         $markets = DB::table('daftar_pasar')->get();
@@ -35,6 +36,15 @@ class GrafikController extends Controller
             'predicted_data' => null,
             'new_predicted_data' => null
         ];
+            if($request->ajax()) {
+                $trainUrl = Http::get('http://127.0.0.1:8008/api/v1/traindata', [
+                        'komoditas_id' => $request->komoditas,
+                        'pasar_id' => $request->pasar,
+                        'start_date' => $request->tanggal_awal,
+                        'end_date' => $request->tanggal_akhir
+                    ]);
+                return json_encode($request->all());
+            };
         
         if (count($request->all()) > 0) {
             $startDate = $request->tanggal_awal;
@@ -44,8 +54,8 @@ class GrafikController extends Controller
             }
             
             $check = DB::table('hasil_prediksi')
-                    ->where('pasar_id',$request->pasar)
                     ->where('komoditas_id',$request->komoditas)
+                    ->where('pasar_id',$request->pasar)
                     ->where('tanggal_awal',$startDate)
                     ->where('tanggal_akhir',$endDate)
                     ->first();
@@ -53,17 +63,20 @@ class GrafikController extends Controller
             if(isset($check))
             {
                 $data = json_decode($check->predicted_data, true);
-                // dd($data['Predicted']);
+                // dd($data);
             } else {
-                $trainUrl = 'http://127.0.0.1:8008/api/v1/traindata?komoditas_id='.$request->komoditas.'&pasar_id='.$request->pasar.'&start_date='.$startDate.'&end_date='.$endDate.'';
-                $hit = $this->proccessData($trainUrl);
-                $predictedData = json_decode($hit, true);
-    
-                sleep(3);
-    
-                $data['predicted_data'] = $predictedData;
-            }
+                $trainUrl = Http::get('http://127.0.0.1:8008/api/v1/traindata', [
+                    'komoditas_id' => $request->komoditas,
+                    'pasar_id' => $request->pasar,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate
+                ]);
+                dd($trainUrl);
 
+                // $trainUrl = 'http://127.0.0.1:8008/api/v1/traindata?komoditas_id='.$request->komoditas.'&pasar_id='.$request->pasar.'&start_date='.$startDate.'&end_date='.$endDate.'';
+                // $hit = $this->proccessData($trainUrl);
+                $data = json_decode($trainUrl, true);
+            }
         }
 
         $comoditiesSelectedValue = null;
