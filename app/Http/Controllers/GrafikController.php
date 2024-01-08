@@ -168,4 +168,16 @@ class GrafikController extends Controller
     {
         //
     }
+
+    function nextPrediction(Request $request) {
+        $predict = Http::timeout(0)->get('http://127.0.0.1:8008/api/v1/predictdata', [
+            'komoditas_id' => $request->komoditas,
+            'pasar_id' => $request->pasar,
+            'start_date' => $request->tanggal_awal,
+            'end_date' => $request->tanggal_akhir,
+            'new_predicted_data' => $request->next_predict
+        ]);
+
+        return json_encode($predict);
+    }
 }

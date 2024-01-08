@@ -75,15 +75,10 @@
                     <form action="" class="modal-body row g-3 requires-validation">
                         <div class="col-6 d-flex justify-content-start">
                             <label>Input data</label>
-                            <input type="hidden" name="tanggal_start" value="{{ $startDate }}">
-                            <input type="hidden" name="tanggal_end" value="{{ $endDate }}">
-                            <input type="hidden" name="pasar" value="{{ $request->pasar }}">
-                            <input type="hidden" name="komoditas" value="{{ $request->komoditas }}">
-                            <input type="number" required name="next_predict" class="form-control"
-                                placeholder="Contoh : 30">
+                            <input type="number" required id="next_predict" class="form-control" placeholder="Contoh : 30">
                         </div>
                         <div class="col-6 justify-content-end d-flex">
-                            <button class="btn btn-success m-1" type="submit">
+                            <button class="btn btn-success m-1" type="button" onclick="nextPred()">
                                 <span class="btn-icon-label">
                                     <span>Predict</span>
                                     <i data-feather="arrow-right" class="me-2"></i>
@@ -340,6 +335,47 @@
                         }
                     });
 
+                }
+            });
+        }
+
+        function nextPred() {
+            event.preventDefault();
+            let komoditas = $("#komoditas_option").val();
+            let pasar = $("#pasar_option").val();
+            let tanggal_awal = $("#tanggal_awal").val();
+            let tanggal_akhir = $("#tanggal_akhir").val();
+            let next_predict = $("#next_predict").val();
+
+            console.log({
+                komoditas
+            });
+            console.log({
+                pasar
+            });
+            console.log({
+                tanggal_awal
+            });
+            console.log({
+                tanggal_akhir
+            });
+            console.log({
+                next_predict
+            });
+
+            $.ajax({
+                type: "get",
+                url: "/predict",
+                data: {
+                    komoditas: komoditas,
+                    pasar: pasar,
+                    tanggal_awal: tanggal_awal,
+                    tanggal_akhir: tanggal_akhir,
+                    next_predict: next_predict
+                },
+                dataType: "json",
+                success: function(response) {
+                    console.log(response);
                 }
             });
         }

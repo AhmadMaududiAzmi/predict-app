@@ -49,6 +49,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
     
 // Grafik
 Route::resource('/grafik', GrafikController::class);
+Route::get('/predict', [GrafikController::class, 'nextPrediction']);
 // Route::get('/grafik/{request}', [GrafikController::class, 'store'])->name('grafik.store');
 // Route::get('/grafik', [GrafikController::class, 'index']);
   
