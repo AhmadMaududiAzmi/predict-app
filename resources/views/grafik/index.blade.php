@@ -49,8 +49,9 @@
     <div class="card mb-0 h-100 overflow-hidden" id="predictContainer">
       <div class="card-header d-flex align-items-center justify-content-between">
         <h5 class="card-title mb-0"> Grafik Harga Komoditas
-          @if(count($request->all()) > 0)
-          {{$comoditiesSelectedValue}} di {{$pasarSelectedValue}} {{$startDate}} sampai {{$endDate}}
+          @if (count($request->all()) > 0)
+          {{ $comoditiesSelectedValue }} di {{ $pasarSelectedValue }} {{ $startDate }} sampai
+          {{ $endDate }}
           @endif
         </h5>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#predictModal">
@@ -69,15 +70,14 @@
           <canvas id="chart"></canvas>
         </div>
       </div>
-      @if(count($request->all()) > 0)
-      <div class="col-12 row card-header justify-content-between d-flex align-items-center">
-        <form action="{{url('grafik')}}" class="modal-body row g-3 requires-validation">
+      <div class="col-12 row card-header justify-content-between d-flex align-items-center d-none" id="addPredict">
+        <form action="" class="modal-body row g-3 requires-validation">
           <div class="col-6 d-flex justify-content-start">
             <label>Input data</label>
-            <input type="hidden" name="tanggal_start" value="{{$startDate}}">
-            <input type="hidden" name="tanggal_end" value="{{$endDate}}">
-            <input type="hidden" name="pasar" value="{{$request->pasar}}">
-            <input type="hidden" name="komoditas" value="{{$request->komoditas}}">
+            <input type="hidden" name="tanggal_start" value="{{ $startDate }}">
+            <input type="hidden" name="tanggal_end" value="{{ $endDate }}">
+            <input type="hidden" name="pasar" value="{{ $request->pasar }}">
+            <input type="hidden" name="komoditas" value="{{ $request->komoditas }}">
             <input type="number" required name="next_predict" class="form-control" placeholder="Contoh : 30">
           </div>
           <div class="col-6 justify-content-end d-flex">
@@ -96,7 +96,6 @@
           </div>
         </form>
       </div>
-      @endif
     </div>
   </div>
 
@@ -169,13 +168,13 @@
       <div class="modal-header">
         <h5 class="modal-title" id="updateComodityLabel">Prediksi Harga Komoditas</h5>
       </div>
-      <form action="{{url('grafik')}}" class="modal-body row g-3 requires-validation">
+      <form action="{{ url('grafik') }}" class="modal-body row g-3 requires-validation">
         <div class="col-12">
           <label for="komoditas" class="form-label">Komoditas</label>
           <select name="komoditas" id="komoditas_option" class="form-control" required>
             <option value="">- Pilih -</option>
             @foreach ($comodities as $item)
-            <option value="{{ $item->id }}" {{$request->komoditas == $item->id ? 'selected':''}}>
+            <option value="{{ $item->id }}" {{ $request->komoditas == $item->id ? 'selected' : '' }}>
               {{ $item->nama_komoditas }}
             </option>
             @endforeach
@@ -186,7 +185,7 @@
           <select name="pasar" id="pasar_option" class="form-control" required>
             <option value="">- Pilih -</option>
             @foreach ($markets as $item)
-            <option value="{{ $item->id }}" {{$request->pasar == $item->id ? 'selected':''}}>
+            <option value="{{ $item->id }}" {{ $request->pasar == $item->id ? 'selected' : '' }}>
               {{ $item->nm_pasar }}
             </option>
             @endforeach
@@ -195,12 +194,12 @@
         <div class="col-12">
           <label for="tanggalAwal" class="form-label">Tanggal Awal</label>
           <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_awal" id="tanggal_awal"
-            class="form-control" value="{{$startDate}}">
+            class="form-control" value="{{ $startDate }}">
         </div>
         <div class="col-12">
           <label for="tanggalAkhir" class="form-label">Tanggal Akhir</label>
           <input type="date" required min="2016-01-01" max="2020-12-31" name="tanggal_akhir" id="tanggal_akhir"
-            class="form-control" value="{{$endDate}}">
+            class="form-control" value="{{ $endDate }}">
         </div>
         <div class="col-12 d-flex align-items-center justify-content-center">
           <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">
@@ -228,6 +227,8 @@
 @section('lib-script')
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
 @endsection
 
 @section('page-script')
@@ -236,9 +237,13 @@
     event.preventDefault();
     $("#predictModal").modal('hide');
     $("#spinner").removeClass("d-none");
-      
+
+    if (window.myChart) {
+      window.myChart.destroy();
+    }
+
     let currentPercentage = 0; // Persentase awal
-    const intervalTime = 100; // Waktu dalam milidetik (1 detik = 1000 milidetik)
+    const intervalTime = 1000; // Waktu dalam milidetik (1 detik = 1000 milidetik)
     const increment = 1; // Persentase yang ingin ditambahkan setiap interval
     const maxPercentage = 80; // Batas maksimum persentase
 
@@ -251,35 +256,87 @@
       percentageText.text(`${percentage}%`);
     }
 
-    const timer = setInterval(() => {
-      if (currentPercentage <= maxPercentage) {
-        updateSpinner(currentPercentage);
-        currentPercentage += increment;
-      } else {
-        currentPercentage %= 100; // Setel ulang persentase ke 0 setelah mencapai batas
-      }
-    }, intervalTime);
+            const timer = setInterval(() => {
+                if (currentPercentage <= maxPercentage) {
+                    updateSpinner(currentPercentage);
+                    currentPercentage += increment;
+                } else {
+                    currentPercentage %= 100; // Setel ulang persentase ke 0 setelah mencapai batas
+                }
+            }, intervalTime);
 
-    let komoditas = $("#komoditas_option").val();
-    let pasar = $("#pasar_option").val();
-    let tanggal_awal = $("#tanggal_awal").val();
-    let tanggal_akhir = $("#tanggal_akhir").val();
+            let komoditas = $("#komoditas_option").val();
+            let pasar = $("#pasar_option").val();
+            let tanggal_awal = $("#tanggal_awal").val();
+            let tanggal_akhir = $("#tanggal_akhir").val();
 
-    $.ajax({
+            $.ajax({
                 type: "get",
                 url: "/grafik",
                 data: {
-                  komoditas:komoditas,
-                  pasar:pasar,
-                  tanggal_awal:tanggal_awal,
-                  tanggal_akhir:tanggal_akhir
+                    komoditas: komoditas,
+                    pasar: pasar,
+                    tanggal_awal: tanggal_awal,
+                    tanggal_akhir: tanggal_akhir
                 },
                 dataType: "json",
                 success: function(response) {
                     $("#spinner").addClass("d-none");
-                    console.log(response);
+                    $('#addPredict').removeClass("d-none");
+
+                    // console.log({response});
+
+                    let predictedData = response.Predicted;
+                    let actualData = response.Actual;
+                    let labelData = Object.keys(predictedData).map(timestamp => {
+                        let date = new Date(parseInt(timestamp));
+                        return date.toISOString().split('T')[0];
+                    });
+
+                    let ctx = document.getElementById('chart').getContext('2d');
+
+                    window.myChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labelData,
+                            datasets: [{
+                                    label: 'Predicted',
+                                    data: Object.values(predictedData),
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1,
+                                    fill: false
+                                },
+                                {
+                                    label: 'Actual',
+                                    data: Object.values(actualData),
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1,
+                                    fill: false
+                                }
+                            ]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    type: 'time',
+                                    time: {
+                                        unit: 'day',
+                                        tooltipFormat: 'DD-MM-YYYY',
+                                        displayFormats: {
+                                            day: 'DD-MM-YYYY'
+                                        }
+                                    }
+                                },
+                                y: {
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        }
+                    });
                 }
             });
-  }
+        }
 </script>
 @endsection

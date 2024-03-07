@@ -26,7 +26,7 @@ class GrafikController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $pagename = 'Grafik Harga Komoditas';
         $comodities = DB::table('daftar_komoditas')->where('status', 'ada')->get();
         $markets = DB::table('daftar_pasar')->get();
@@ -36,34 +36,25 @@ class GrafikController extends Controller
             'predicted_data' => null,
             'new_predicted_data' => null
         ];
-            if($request->ajax()) {
-                $trainUrl = Http::get('http://127.0.0.1:8008/api/v1/traindata', [
-                        'komoditas_id' => $request->komoditas,
-                        'pasar_id' => $request->pasar,
-                        'start_date' => $request->tanggal_awal,
-                        'end_date' => $request->tanggal_akhir
-                    ]);
-                return json_encode($request->all());
-            };
-        
+
         if (count($request->all()) > 0) {
             $startDate = $request->tanggal_awal;
             $endDate = $request->tanggal_akhir;
             if ($request->new_predicted_data) {
                 $endDate = Carbon::parse($endDate)->addDays($request->new_predicted_data)->format('Y-m-d');
             }
-            
+
             $check = DB::table('hasil_prediksi')
-                    ->where('komoditas_id',$request->komoditas)
-                    ->where('pasar_id',$request->pasar)
-                    ->where('tanggal_awal',$startDate)
-                    ->where('tanggal_akhir',$endDate)
-                    ->first();
-            
-            if(isset($check))
-            {
+                ->where('komoditas_id', $request->komoditas)
+                ->where('pasar_id', $request->pasar)
+                ->where('tanggal_awal', $startDate)
+                ->where('tanggal_akhir', $endDate)
+                ->first();
+
+            if (isset($check)) {
                 $data = json_decode($check->predicted_data, true);
                 // dd($data);
+                return $data;
             } else {
                 $trainUrl = Http::get('http://127.0.0.1:8008/api/v1/traindata', [
                     'komoditas_id' => $request->komoditas,
@@ -71,11 +62,9 @@ class GrafikController extends Controller
                     'start_date' => $startDate,
                     'end_date' => $endDate
                 ]);
-                dd($trainUrl);
-
-                // $trainUrl = 'http://127.0.0.1:8008/api/v1/traindata?komoditas_id='.$request->komoditas.'&pasar_id='.$request->pasar.'&start_date='.$startDate.'&end_date='.$endDate.'';
-                // $hit = $this->proccessData($trainUrl);
                 $data = json_decode($trainUrl, true);
+                // dd($data);
+                return $data;
             }
         }
 
